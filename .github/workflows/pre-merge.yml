@@ -52,9 +52,12 @@ jobs:
       # Scans all lockfiles: package-lock.json (npm), requirements.txt (pip), pom.xml (maven)
       - name: A2 grype_native — scan all lockfiles
         run: |
-          grype dir:. --output json > grype_output_full.json 2>&1 || true
-          echo "Grype total matches: $(jq '.matches | length' grype_output_full.json)"
-          jq '[.matches[] | .vulnerability.namespace] | group_by(.) | map({ns: .[0], count: length})' grype_output_full.json
+          grype dir:. --output json > grype_output_full.json 2>grype_stderr.log
+          echo "=== grype stderr (info only) ==="
+          head -20 grype_stderr.log
+          echo "=== grype output summary ==="
+          jq '.matches | length' grype_output_full.json 2>&1 | head || echo "jq failed, output may be malformed"
+          jq '[.matches[] | .vulnerability.namespace] | group_by(.) | map({ns: .[0], count: length})' grype_output_full.json 2>&1 | head -20 || true
 
       # -------- Arm A3: canonical_enrichment (post-process Grype output) --------
       - name: A3 canonical_enrichment — normalize + labels
