@@ -1,15 +1,21 @@
-name: pre-merge canonical-lookup gate
+name: pre-merge canonical-lookup gate (v4 4-arm architecture matrix)
 
-# H2 stage v4 pilot workflow (07-01-a spec).
-# 3-arm attribution decomposition on npm lockfile.
-# Runs on PR open, emits 3 status checks + artifacts.
+# H2 stage v4' pilot: 4-arm architecture matrix on n=15 tuples × 3 ecosystems
+# Arms:
+#   A1 nvd_direct              — independent detection (raw NVD data lookup)
+#   A2 grype_native            — real scanner activity (Grype raw output)
+#   A3 canonical_enrichment    — Grype-downstream post-processing (bounded by A2 coverage)
+#   A4 canonical_direct        — independent detection (canonical snapshot lookup)
+#
+# Key deltas:
+#   Δ_grype_aggregation      = A2 - A1  (scanner DB aggregation benefit)
+#   Δ_traceability_only      = A3 - A2  (enrichment layer value = just sources labels)
+#   Δ_architecture           = A4 - A3  (independent vs enrichment insertion architecture)
+#   Δ_gap_recovery           = A4 - A2  (canonical direct closes scanner blind spots)
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - 'package-lock.json'
-      - 'package.json'
   push:
     branches: [main]
   workflow_dispatch:
@@ -17,15 +23,10 @@ on:
 permissions:
   contents: read
   pull-requests: write
-  statuses: write
 
 jobs:
   scan-and-attribute:
     runs-on: ubuntu-latest
-    outputs:
-      nvd_only_status: ${{ steps.metrics.outputs.nvd_only }}
-      scanner_native_status: ${{ steps.metrics.outputs.scanner_native }}
-      canonical_status: ${{ steps.metrics.outputs.canonical }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,126 +36,89 @@ jobs:
         with:
           python-version: '3.11'
 
-      # -------- Scanner: install Grype + capture DB metadata --------
-      - name: Install Grype (multi-source scanner)
+      # -------- Install Grype --------
+      - name: Install Grype
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
 
-      - name: Capture Grype DB metadata (freshness disclosure)
-        id: grype_db
+      - name: Capture Grype DB metadata
         run: |
-          # DB not yet populated — trigger download first (first grype invocation auto-updates)
-          grype db update 2>&1 | tail -5 || true
-          # Capture status (JSON form first, fall back to text)
+          grype db update 2>&1 | tail -3 || true
           grype db status -o json > grype_db_metadata.json 2>/dev/null || \
             grype db status > grype_db_metadata.json 2>&1 || true
-          cat grype_db_metadata.json || echo "no metadata"
-          # Extract built timestamp (best-effort)
-          BUILT=$(jq -r '.built // .path // "unknown"' grype_db_metadata.json 2>/dev/null || \
-                  grep -i "built:" grype_db_metadata.json | head -1 | sed 's/.*: *//' || echo "unknown")
-          echo "built=${BUILT}" >> $GITHUB_OUTPUT
+          cat grype_db_metadata.json | head -20
 
-      - name: Run Grype on lockfile
+      # -------- Arm A2: grype_native (real scanner) --------
+      # Scans all lockfiles: package-lock.json (npm), requirements.txt (pip), pom.xml (maven)
+      - name: A2 grype_native — scan all lockfiles
         run: |
-          grype sbom:package-lock.json --output json > grype_output_full.json 2>&1 || \
-            grype dir:. --output json > grype_output_full.json
-          echo "Grype output matches count:"
-          jq '.matches | length' grype_output_full.json
+          grype dir:. --output json > grype_output_full.json 2>&1 || true
+          echo "Grype total matches: $(jq '.matches | length' grype_output_full.json)"
+          jq '[.matches[] | .vulnerability.namespace] | group_by(.) | map({ns: .[0], count: length})' grype_output_full.json
 
-      # -------- Arm 1: nvd_only filter --------
-      - name: Extract nvd_only view (post-filter to nvd namespace)
+      # -------- Arm A3: canonical_enrichment (post-process Grype output) --------
+      - name: A3 canonical_enrichment — normalize + labels
         run: |
-          jq '{matches: [.matches[] | select(.vulnerability.namespace | startswith("nvd"))]}' \
-            grype_output_full.json > grype_output_nvd_only.json
+          python .github/actions/canonical-lookup/canonical_lookup.py \
+            --grype-input grype_output_full.json \
+            --canonical-snapshot canonical_data/unified_canonical.json \
+            --output arm_A3_canonical_enrichment.json
+          echo "A3 matches: $(jq '.total' arm_A3_canonical_enrichment.json)"
 
-      # -------- Arm 2: grype_native (raw multi-source) --------
-      - name: Extract grype_native view (raw, no processing)
-        run: cp grype_output_full.json grype_output_scanner_native.json
+      # -------- Arm A1: nvd_direct (independent detection from NVD raw) --------
+      - name: A1 nvd_direct — independent NVD lookup
+        run: |
+          python .github/actions/canonical-lookup/direct_lookup.py \
+            --mode nvd \
+            --pilot-tuples tests/pilot_tuples.json \
+            --nvd-dir nvd_data \
+            --output arm_A1_nvd_direct.json
+          echo "A1 matches: $(jq '.total' arm_A1_nvd_direct.json)"
 
-      # -------- Arm 3: canonical (our normalize + labels) --------
-      - name: Run canonical-lookup composite action
-        uses: ./.github/actions/canonical-lookup
-        with:
-          grype-input: grype_output_full.json
-          canonical-snapshot: canonical_data/canonical_subset.json
-          output: grype_output_canonical.json
+      # -------- Arm A4: canonical_direct (independent detection from canonical) --------
+      - name: A4 canonical_direct — independent canonical lookup
+        run: |
+          python .github/actions/canonical-lookup/direct_lookup.py \
+            --mode canonical \
+            --pilot-tuples tests/pilot_tuples.json \
+            --canonical-snapshot canonical_data/unified_canonical.json \
+            --output arm_A4_canonical_direct.json
+          echo "A4 matches: $(jq '.total' arm_A4_canonical_direct.json)"
 
-      # -------- Compute metrics per arm --------
-      - name: Compute metrics + attribution decomposition
-        id: metrics
+      # -------- Compute 4-arm attribution --------
+      - name: Compute 4-arm attribution decomposition
         run: |
           python .github/scripts/compute_metrics.py \
-            --nvd_only grype_output_nvd_only.json \
-            --scanner_native grype_output_scanner_native.json \
-            --canonical grype_output_canonical.json \
+            --a1_nvd_direct arm_A1_nvd_direct.json \
+            --a2_grype_native grype_output_full.json \
+            --a3_canonical_enrichment arm_A3_canonical_enrichment.json \
+            --a4_canonical_direct arm_A4_canonical_direct.json \
             --gt tests/pilot_tuples.json \
+            --canonical-snapshot canonical_data/unified_canonical.json \
             --output metrics_summary.json
-
-          # emit outputs for status checks
-          echo "nvd_only=$(jq -r '.nvd_only.status' metrics_summary.json)" >> $GITHUB_OUTPUT
-          echo "scanner_native=$(jq -r '.scanner_native.status' metrics_summary.json)" >> $GITHUB_OUTPUT
-          echo "canonical=$(jq -r '.canonical.status' metrics_summary.json)" >> $GITHUB_OUTPUT
-
-      # -------- Emit 3 status checks --------
-      - name: Post status check — nvd_only
-        run: |
-          gh api repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }} \
-            -f state="${{ steps.metrics.outputs.nvd_only }}" \
-            -f context="canonical-lookup / nvd_only" \
-            -f description="NVD-only view coverage" || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Post status check — scanner_native
-        run: |
-          gh api repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }} \
-            -f state="${{ steps.metrics.outputs.scanner_native }}" \
-            -f context="canonical-lookup / scanner_native" \
-            -f description="Grype multi-source view coverage" || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Post status check — canonical (gate)
-        run: |
-          gh api repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha }} \
-            -f state="${{ steps.metrics.outputs.canonical }}" \
-            -f context="canonical-lookup / canonical" \
-            -f description="Canonical normalize+labels view coverage (enforcing gate)" || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "=== SUMMARY ==="
+          jq '{
+            a1: .a1_nvd_direct | {cov: .coverage_hit, act: .actionability, trace: .traceability},
+            a2: .a2_grype_native | {cov: .coverage_hit, act: .actionability, trace: .traceability},
+            a3: .a3_canonical_enrichment | {cov: .coverage_hit, act: .actionability, trace: .traceability},
+            a4: .a4_canonical_direct | {cov: .coverage_hit, act: .actionability, trace: .traceability},
+            deltas: {
+              grype_aggregation: .delta_grype_aggregation,
+              traceability_only: .delta_traceability_only,
+              architecture: .delta_architecture,
+              gap_recovery: .delta_gap_recovery
+            }
+          }' metrics_summary.json
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: canonical-lookup-outputs-${{ github.run_id }}
+          name: 4arm-pilot-outputs-${{ github.run_id }}
           path: |
             grype_db_metadata.json
             grype_output_full.json
-            grype_output_nvd_only.json
-            grype_output_scanner_native.json
-            grype_output_canonical.json
+            arm_A1_nvd_direct.json
+            arm_A3_canonical_enrichment.json
+            arm_A4_canonical_direct.json
             metrics_summary.json
           retention-days: 30
-
-      - name: Post PR comment (metric summary)
-        if: github.event.pull_request.number != null
-        run: |
-          BODY=$(python -c "
-          import json
-          m = json.load(open('metrics_summary.json'))
-          print('## canonical-lookup gate results')
-          print()
-          print('| Arm | Coverage | Actionability | Traceability | tier A/P/N |')
-          print('|---|---|---|---|---|')
-          for arm in ['nvd_only','scanner_native','canonical']:
-              a = m[arm]
-              print(f'| {arm} | {a[\"coverage_hit\"]} | {a[\"actionability\"]} | {a[\"traceability\"]} | {a[\"tier_A\"]}/{a[\"tier_P\"]}/{a[\"tier_N\"]} |')
-          print()
-          print(f'**Δ_scanner_aggregation** (grype_native - nvd_only): coverage={m[\"delta_scanner\"][\"coverage\"]:+d}, actionability={m[\"delta_scanner\"][\"actionability\"]:+d}')
-          print(f'**Δ_canonical_algorithm** (canonical - scanner_native): coverage={m[\"delta_canonical\"][\"coverage\"]:+d}, actionability={m[\"delta_canonical\"][\"actionability\"]:+d}, traceability={m[\"delta_canonical\"][\"traceability\"]:+d}')
-          print()
-          print(f'Grype DB built: {m[\"grype_db_built\"]}')
-          ")
-          gh pr comment ${{ github.event.pull_request.number }} --body "$BODY" || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,11 +1,14 @@
 {
-  "name": "mock-vuln-npm-pilot",
-  "version": "0.1.0",
-  "description": "H2 stage v4 pilot mock repo — pinned vulnerable deps for canonical-lookup research",
+  "name": "mock-vuln-multi-pilot",
+  "version": "0.2.0",
+  "description": "H2 stage v4 pilot (4-arm architecture matrix) mock repo with npm+pip+maven lockfiles",
   "private": true,
   "license": "UNLICENSED",
   "dependencies": {
     "signalk-server": "2.20.2",
-    "liquidjs": "10.25.0"
+    "lodash": "4.17.10",
+    "axios": "0.29.0",
+    "node-fetch": "3.2.9",
+    "jquery": "2.2.4"
   }
 }

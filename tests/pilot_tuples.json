@@ -1,20 +1,152 @@
 [
   {
-    "stratum": "NVD-hard",
+    "ecosystem": "npm",
     "cve_id": "CVE-2026-25228",
     "package": "signalk-server",
-    "ecosystem": "npm",
+    "reference_fix_versions": [
+      "2.20.3"
+    ],
     "vulnerable_version": "2.20.2",
-    "reference_fix_versions": ["2.20.3"],
-    "note": "NVD-only misses (CPE-schema); canonical catches via GHSA/OSV union"
+    "confidence": "high"
   },
   {
-    "stratum": "GHSA-hard",
-    "cve_id": "CVE-2026-33285",
-    "package": "liquidjs",
     "ecosystem": "npm",
-    "vulnerable_version": "10.25.0",
-    "reference_fix_versions": ["10.25.1"],
-    "note": "GHSA emit vulnerable_range only (no fixed_version tier-A); NVD catches"
+    "cve_id": "CVE-2019-1010266",
+    "package": "lodash",
+    "reference_fix_versions": [
+      "4.17.11"
+    ],
+    "vulnerable_version": "4.17.10",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2021-3749",
+    "package": "axios",
+    "reference_fix_versions": [
+      "0.30.0"
+    ],
+    "vulnerable_version": "0.29.0",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2022-2596",
+    "package": "node-fetch",
+    "reference_fix_versions": [
+      "3.2.10"
+    ],
+    "vulnerable_version": "3.2.9",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2016-10707",
+    "package": "jquery",
+    "reference_fix_versions": [
+      "3.0.0"
+    ],
+    "vulnerable_version": "2.0.0",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "pip",
+    "cve_id": "CVE-2022-29204",
+    "package": "tensorflow",
+    "reference_fix_versions": [
+      "2.10.0rc0"
+    ],
+    "vulnerable_version": "2.9.0",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "pip",
+    "cve_id": "CVE-2018-7576",
+    "package": "tensorflow",
+    "reference_fix_versions": [
+      "2.5.2"
+    ],
+    "vulnerable_version": "2.5.1",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "pip",
+    "cve_id": "CVE-2021-29572",
+    "package": "tensorflow",
+    "reference_fix_versions": [
+      "2.6.0rc0"
+    ],
+    "vulnerable_version": "2.5.0",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "pip",
+    "cve_id": "CVE-2024-1892",
+    "package": "scrapy",
+    "reference_fix_versions": [
+      "2.11.1"
+    ],
+    "vulnerable_version": "2.11.0",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "pip",
+    "cve_id": "CVE-2021-29561",
+    "package": "tensorflow",
+    "reference_fix_versions": [
+      "2.6.0rc0"
+    ],
+    "vulnerable_version": "2.5.0",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "maven",
+    "cve_id": "CVE-2023-42278",
+    "package": "cn.hutool:hutool-core",
+    "reference_fix_versions": [
+      "5.8.22"
+    ],
+    "vulnerable_version": "5.8.21",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "maven",
+    "cve_id": "CVE-2023-42276",
+    "package": "cn.hutool:hutool-core",
+    "reference_fix_versions": [
+      "5.8.22"
+    ],
+    "vulnerable_version": "5.8.21",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "maven",
+    "cve_id": "CVE-2025-22227",
+    "package": "io.projectreactor.netty:reactor-netty-http",
+    "reference_fix_versions": [
+      "1.2.8"
+    ],
+    "vulnerable_version": "1.2.7",
+    "confidence": "high"
+  },
+  {
+    "ecosystem": "maven",
+    "cve_id": "CVE-2024-8991",
+    "package": "org.openrefine:main",
+    "reference_fix_versions": [
+      "3.9.6"
+    ],
+    "vulnerable_version": "3.9.5",
+    "confidence": "medium"
+  },
+  {
+    "ecosystem": "maven",
+    "cve_id": "CVE-2025-64099",
+    "package": "org.openidentityplatform.openam:openam-oauth2",
+    "reference_fix_versions": [
+      "16.0.3"
+    ],
+    "vulnerable_version": "16.0.2",
+    "confidence": "high"
   }
 ]
