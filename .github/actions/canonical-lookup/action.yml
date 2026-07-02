@@ -16,7 +16,8 @@ runs:
   steps:
     - name: Run canonical-lookup Python entrypoint
       shell: bash
-      run: python ${{ github.action_path }}/canonical_lookup.py \
-             --grype-input "${{ inputs.grype-input }}" \
-             --canonical-snapshot "${{ inputs.canonical-snapshot }}" \
-             --output "${{ inputs.output }}"
+      run: |
+        python "${{ github.action_path }}/canonical_lookup.py" \
+          --grype-input "${{ inputs.grype-input }}" \
+          --canonical-snapshot "${{ inputs.canonical-snapshot }}" \
+          --output "${{ inputs.output }}"
