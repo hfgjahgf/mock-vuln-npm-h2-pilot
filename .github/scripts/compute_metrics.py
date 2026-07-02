@@ -36,28 +36,37 @@ def classify_tier(fv):
 
 
 def parse_grype_output(path):
-    """Parse Grype JSON — returns list of {cve_id, package, fix_versions[], namespace}."""
+    """Parse Grype JSON — returns list of {primary_id, aliases[], cve_ids[], package, fix_versions[], namespace}.
+
+    Grype primary IDs for npm packages are GHSA-* (from github:language:javascript namespace).
+    CVE IDs are in relatedVulnerabilities[].id — we collect both primary + aliases.
+    """
     data = json.loads(Path(path).read_text(encoding='utf-8'))
     entries = []
     for m in data.get('matches') or []:
         v = m.get('vulnerability') or {}
         artifact = m.get('artifact') or {}
-        cve = v.get('id')
-        # If not a CVE, check related
+        primary = v.get('id')
         related = v.get('relatedVulnerabilities') or []
-        cve_candidates = [cve]
+        # All IDs — primary + related (for cross-ID matching)
+        all_ids = {primary}
+        cve_ids = set()
         for rv in related:
             rid = rv.get('id') or ''
-            if rid.startswith('CVE-'):
-                cve_candidates.append(rid)
-        # Pick first CVE-style id
-        cve_id = next((c for c in cve_candidates if c and c.startswith('CVE-')), cve)
+            if rid:
+                all_ids.add(rid)
+                if rid.startswith('CVE-'):
+                    cve_ids.add(rid)
+        if primary and primary.startswith('CVE-'):
+            cve_ids.add(primary)
 
         fix = v.get('fix') or {}
         fix_versions = fix.get('versions') or []
 
         entries.append({
-            'cve_id': cve_id,
+            'primary_id': primary,
+            'all_ids': sorted(all_ids),
+            'cve_ids': sorted(cve_ids),
             'package': artifact.get('name'),
             'version': artifact.get('version'),
             'fix_versions': fix_versions,
@@ -67,9 +76,24 @@ def parse_grype_output(path):
 
 
 def parse_canonical_output(path):
-    """Parse canonical-lookup output — has sources labels."""
+    """Parse canonical-lookup output — has sources labels + all_ids alias chain."""
     data = json.loads(Path(path).read_text(encoding='utf-8'))
-    return data.get('matches') or []
+    entries = []
+    for m in data.get('matches') or []:
+        primary = m.get('primary_id') or m.get('cve_id')
+        all_ids = m.get('all_ids') or ([primary] if primary else [])
+        cve_ids = [i for i in all_ids if i and i.startswith('CVE-')]
+        entries.append({
+            'primary_id': primary,
+            'all_ids': all_ids,
+            'cve_ids': cve_ids,
+            'package': m.get('package'),
+            'version': m.get('version'),
+            'fix_versions': m.get('fix_versions') or [],
+            'namespace': m.get('namespace'),
+            'sources': m.get('sources') or [],
+        })
+    return entries
 
 
 def compute_arm_metrics(entries, gt_tuples):
@@ -82,11 +106,12 @@ def compute_arm_metrics(entries, gt_tuples):
         gt_fixes.discard(None)
 
         # Filter entries matching target_cve × target_pkg
+        # Match by CVE ID appearing in ANY of the entry's IDs (primary + related aliases)
         matched = []
         for e in entries:
-            e_cve = e.get('cve_id') or ''
             e_pkg = (e.get('package') or '').lower()
-            if e_cve == target_cve and target_pkg.lower() in e_pkg:
+            all_ids = e.get('all_ids') or ([e.get('primary_id')] if e.get('primary_id') else [])
+            if target_cve in all_ids and target_pkg.lower() == e_pkg:
                 matched.append(e)
 
         # Compute tier

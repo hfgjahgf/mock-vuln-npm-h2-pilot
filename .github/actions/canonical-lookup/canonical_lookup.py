@@ -42,17 +42,30 @@ def build_canonical_index(canonical_snapshot):
 
 
 def process(grype_output, canonical_index):
-    """Normalize + dedup + attach sources labels."""
+    """Normalize + dedup + attach sources labels.
+
+    Preserves all IDs (primary + related aliases) so downstream can match by CVE
+    even when Grype's primary ID is GHSA-*.
+    Also looks up sources in canonical snapshot by ANY of the entry's IDs.
+    """
     out_matches = []
     seen = set()
     for m in grype_output.get('matches') or []:
         v = m.get('vulnerability') or {}
-        vid = v.get('id')
+        primary = v.get('id')
         artifact = m.get('artifact') or {}
         pkg = artifact.get('name')
 
-        # Dedup by (CVE, package)
-        key = (vid, pkg)
+        # Collect all IDs (primary + related for CVE-alias linking)
+        related = v.get('relatedVulnerabilities') or []
+        all_ids = [primary] if primary else []
+        for rv in related:
+            rid = rv.get('id')
+            if rid and rid not in all_ids:
+                all_ids.append(rid)
+
+        # Dedup by (primary_id, package)
+        key = (primary, pkg)
         if key in seen:
             continue
         seen.add(key)
@@ -60,18 +73,24 @@ def process(grype_output, canonical_index):
         # Normalize fix versions
         fix = v.get('fix') or {}
         norm_versions = [normalize_version(fv) for fv in (fix.get('versions') or [])]
-        norm_versions = [v for v in norm_versions if v is not None]
+        norm_versions = [x for x in norm_versions if x is not None]
 
-        # Attach sources labels from canonical snapshot
-        sources = canonical_index.get(vid, {}).get(pkg, [])
+        # Attach sources labels: look up ANY of the IDs in canonical index
+        sources = []
+        for candidate_id in all_ids:
+            for s in canonical_index.get(candidate_id, {}).get(pkg, []):
+                if s not in sources:
+                    sources.append(s)
 
         out_matches.append({
-            'cve_id': vid,
+            'cve_id': primary,          # backward-compat field
+            'primary_id': primary,
+            'all_ids': all_ids,          # preserve alias chain for downstream matching
             'package': pkg,
             'version': artifact.get('version'),
             'fix_versions': norm_versions,
             'namespace': v.get('namespace'),
-            'sources': sources,  # <-- canonical's traceability contribution
+            'sources': sources,          # <-- canonical's traceability contribution
         })
 
     return {'matches': out_matches, 'total': len(out_matches)}
