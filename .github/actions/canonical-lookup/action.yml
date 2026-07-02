@@ -1,0 +1,22 @@
+name: 'canonical-lookup'
+description: 'Normalize + dedup + sources-labels a Grype output using local canonical snapshot'
+inputs:
+  grype-input:
+    description: 'Path to Grype JSON output'
+    required: true
+  canonical-snapshot:
+    description: 'Path to canonical snapshot JSON'
+    required: true
+  output:
+    description: 'Path to write canonical-normalized JSON output'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run canonical-lookup Python entrypoint
+      shell: bash
+      run: python ${{ github.action_path }}/canonical_lookup.py \
+             --grype-input "${{ inputs.grype-input }}" \
+             --canonical-snapshot "${{ inputs.canonical-snapshot }}" \
+             --output "${{ inputs.output }}"

@@ -1,0 +1,3338 @@
+[
+  {
+    "cve_id": "CVE-2025-66398",
+    "ids": {
+      "cve_id": "CVE-2025-66398",
+      "ghsa_id": [
+        {
+          "value": "GHSA-w3x5-7c4c-66p9",
+          "sources": [
+            "ghsa",
+            "osv"
+          ]
+        }
+      ],
+      "osv_id": [
+        {
+          "value": "CVE-2025-66398",
+          "sources": [
+            "osv"
+          ]
+        }
+      ],
+      "aliases": [
+        "CVE-2025-66398",
+        "GHSA-w3x5-7c4c-66p9"
+      ]
+    },
+    "severity": [
+      {
+        "score": 9.6,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+        "label": "CRITICAL",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "score": 9.6,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+        "label": "critical",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "score": null,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H",
+        "label": null,
+        "sources": [
+          "osv"
+        ]
+      }
+    ],
+    "cwe_ids": [
+      {
+        "value": "CWE-78",
+        "sources": [
+          "nvd",
+          "ghsa",
+          "osv"
+        ]
+      },
+      {
+        "value": "CWE-913",
+        "sources": [
+          "nvd",
+          "ghsa",
+          "osv"
+        ]
+      }
+    ],
+    "affected": [
+      {
+        "package": "signalk:signal_k_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 2.19.0",
+        "fixed_version": "2.19.0",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "signalk-server",
+        "ecosystem": "npm",
+        "vulnerable_range": "< 2.19.0",
+        "fixed_version": "2.19.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": null,
+        "ecosystem": null,
+        "vulnerable_range": ">= 0, < 3037c517bb8de70c4b74b61192c57d6176731571",
+        "fixed_version": "3037c517bb8de70c4b74b61192c57d6176731571",
+        "sources": [
+          "osv"
+        ]
+      }
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-33285",
+    "ids": {
+      "cve_id": "CVE-2026-33285",
+      "ghsa_id": [
+        {
+          "value": "GHSA-9r5m-9576-7f6x",
+          "sources": [
+            "ghsa"
+          ]
+        }
+      ],
+      "osv_id": [],
+      "aliases": [
+        "CVE-2026-33285",
+        "GHSA-9r5m-9576-7f6x"
+      ]
+    },
+    "severity": [
+      {
+        "score": 7.5,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "label": "HIGH",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "score": 7.5,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+        "label": "high",
+        "sources": [
+          "ghsa"
+        ]
+      }
+    ],
+    "cwe_ids": [
+      {
+        "value": "CWE-20",
+        "sources": [
+          "nvd",
+          "ghsa"
+        ]
+      },
+      {
+        "value": "CWE-400",
+        "sources": [
+          "nvd",
+          "ghsa"
+        ]
+      }
+    ],
+    "affected": [
+      {
+        "package": "liquidjs:liquidjs",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 10.25.1",
+        "fixed_version": "10.25.1",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "liquidjs",
+        "ecosystem": "npm",
+        "vulnerable_range": "<= 10.24.0",
+        "fixed_version": null,
+        "sources": [
+          "ghsa"
+        ]
+      }
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-25228",
+    "ids": {
+      "cve_id": "CVE-2026-25228",
+      "ghsa_id": [
+        {
+          "value": "GHSA-vrhw-v2hw-jffx",
+          "sources": [
+            "ghsa",
+            "osv"
+          ]
+        }
+      ],
+      "osv_id": [
+        {
+          "value": "CVE-2026-25228",
+          "sources": [
+            "osv"
+          ]
+        }
+      ],
+      "aliases": [
+        "CVE-2026-25228",
+        "GHSA-vrhw-v2hw-jffx"
+      ]
+    },
+    "severity": [
+      {
+        "score": 5.0,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:N/A:N",
+        "label": "MEDIUM",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "score": 5.0,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:N/A:N",
+        "label": "medium",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "score": null,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:N/A:N",
+        "label": null,
+        "sources": [
+          "osv"
+        ]
+      }
+    ],
+    "cwe_ids": [
+      {
+        "value": "CWE-22",
+        "sources": [
+          "nvd",
+          "ghsa",
+          "osv"
+        ]
+      }
+    ],
+    "affected": [
+      {
+        "package": "signalk:signal_k_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 2.20.3",
+        "fixed_version": "2.20.3",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "microsoft:windows",
+        "ecosystem": "cpe",
+        "vulnerable_range": "*",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "signalk-server",
+        "ecosystem": "npm",
+        "vulnerable_range": "<= 2.20.2",
+        "fixed_version": "2.20.3",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": null,
+        "ecosystem": null,
+        "vulnerable_range": ">= 0, < 417509c2b4999017016124c2aeb0b0246e727315",
+        "fixed_version": "417509c2b4999017016124c2aeb0b0246e727315",
+        "sources": [
+          "osv"
+        ]
+      }
+    ]
+  },
+  {
+    "cve_id": "CVE-2026-23515",
+    "ids": {
+      "cve_id": "CVE-2026-23515",
+      "ghsa_id": [
+        {
+          "value": "GHSA-p8gp-2w28-mhwg",
+          "sources": [
+            "ghsa",
+            "osv"
+          ]
+        }
+      ],
+      "osv_id": [
+        {
+          "value": "CVE-2026-23515",
+          "sources": [
+            "osv"
+          ]
+        }
+      ],
+      "aliases": [
+        "CVE-2026-23515",
+        "GHSA-p8gp-2w28-mhwg"
+      ]
+    },
+    "severity": [
+      {
+        "score": 9.9,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+        "label": "CRITICAL",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "score": 9.9,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+        "label": "critical",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "score": null,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+        "label": null,
+        "sources": [
+          "osv"
+        ]
+      }
+    ],
+    "cwe_ids": [
+      {
+        "value": "CWE-78",
+        "sources": [
+          "nvd",
+          "ghsa",
+          "osv"
+        ]
+      }
+    ],
+    "affected": [
+      {
+        "package": "signalk:signal_k_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 1.5.0",
+        "fixed_version": "1.5.0",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "@signalk/set-system-time",
+        "ecosystem": "npm",
+        "vulnerable_range": "< 1.5.0",
+        "fixed_version": "1.5.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": null,
+        "ecosystem": null,
+        "vulnerable_range": ">= 0, < f4bdeea61261185993d68a87f96996e7790bef22",
+        "fixed_version": "f4bdeea61261185993d68a87f96996e7790bef22",
+        "sources": [
+          "osv"
+        ]
+      },
+      {
+        "package": null,
+        "ecosystem": null,
+        "vulnerable_range": ">= 0, < 83016dc0c56c19670e0f9d202a293964fcfcd972",
+        "fixed_version": "83016dc0c56c19670e0f9d202a293964fcfcd972",
+        "sources": [
+          "osv"
+        ]
+      }
+    ]
+  },
+  {
+    "cve_id": "CVE-2019-11358",
+    "ids": {
+      "cve_id": "CVE-2019-11358",
+      "ghsa_id": [
+        {
+          "value": "GHSA-6c3j-c64m-qhgq",
+          "sources": [
+            "ghsa",
+            "osv"
+          ]
+        }
+      ],
+      "osv_id": [
+        {
+          "value": "CVE-2019-11358",
+          "sources": [
+            "osv"
+          ]
+        }
+      ],
+      "aliases": [
+        "CVE-2019-11358",
+        "DRUPAL-CORE-2019-006",
+        "GHSA-6c3j-c64m-qhgq"
+      ]
+    },
+    "severity": [
+      {
+        "score": 6.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "label": "MEDIUM",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "score": 6.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "label": "medium",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "score": null,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "label": null,
+        "sources": [
+          "osv"
+        ]
+      }
+    ],
+    "cwe_ids": [
+      {
+        "value": "CWE-1321",
+        "sources": [
+          "nvd",
+          "ghsa"
+        ]
+      },
+      {
+        "value": "CWE-79",
+        "sources": [
+          "ghsa"
+        ]
+      }
+    ],
+    "affected": [
+      {
+        "package": "jquery:jquery",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 3.4.0",
+        "fixed_version": "3.4.0",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "debian:debian_linux",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "debian:debian_linux",
+        "ecosystem": "cpe",
+        "vulnerable_range": "9.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "debian:debian_linux",
+        "ecosystem": "cpe",
+        "vulnerable_range": "10.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "drupal:drupal",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 7.0, < 7.66",
+        "fixed_version": "7.66",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "drupal:drupal",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.5.0, < 8.5.15",
+        "fixed_version": "8.5.15",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "drupal:drupal",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.6.0, < 8.6.15",
+        "fixed_version": "8.6.15",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "backdropcms:backdrop",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 1.11.0, < 1.11.9",
+        "fixed_version": "1.11.9",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "backdropcms:backdrop",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 1.12.0, < 1.12.6",
+        "fixed_version": "1.12.6",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "fedoraproject:fedora",
+        "ecosystem": "cpe",
+        "vulnerable_range": "28",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "fedoraproject:fedora",
+        "ecosystem": "cpe",
+        "vulnerable_range": "29",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "fedoraproject:fedora",
+        "ecosystem": "cpe",
+        "vulnerable_range": "30",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "opensuse:backports_sle",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "opensuse:leap",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "netapp:oncommand_system_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 3.0, <= 3.1.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "netapp:snapcenter",
+        "ecosystem": "cpe",
+        "vulnerable_range": "*",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "redhat:cloudforms",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "redhat:virtualization_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_express",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 19.1",
+        "fixed_version": "19.1",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_service_level_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "13.2.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_service_level_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "13.3.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_testing_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.5.0.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_testing_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "13.1.0.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_testing_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "13.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_testing_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "13.2.0.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_testing_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "13.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:application_testing_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "13.3.0.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_digital_experience",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_digital_experience",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_digital_experience",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_digital_experience",
+        "ecosystem": "cpe",
+        "vulnerable_range": "19.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_digital_experience",
+        "ecosystem": "cpe",
+        "vulnerable_range": "19.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_digital_experience",
+        "ecosystem": "cpe",
+        "vulnerable_range": "20.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_enterprise_collections",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 2.7.0, <= 2.8.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_platform",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 2.4.0, <= 2.10.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:bi_publisher",
+        "ecosystem": "cpe",
+        "vulnerable_range": "5.5.0.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:bi_publisher",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:bi_publisher",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:big_data_discovery",
+        "ecosystem": "cpe",
+        "vulnerable_range": "1.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:business_process_management_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:business_process_management_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_application_session_controller",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.8m0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_billing_and_revenue_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.5",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_billing_and_revenue_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.5.0.23.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_billing_and_revenue_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_billing_and_revenue_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.0.0.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_diameter_signaling_router",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_diameter_signaling_router",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_diameter_signaling_router",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_diameter_signaling_router",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.2.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_eagle_application_processor",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 16.1.0, <= 16.4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_element_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_element_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_element_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.2.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_interactive_session_recorder",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 6.0, <= 6.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_operations_monitor",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 4.1, <= 4.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_operations_monitor",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_operations_monitor",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_operations_monitor",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_services_gatekeeper",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_session_report_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_session_report_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_session_report_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.2.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_session_route_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_session_route_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_session_route_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.2.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_unified_inventory_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_unified_inventory_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_webrtc_session_controller",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:diagnostic_assistant",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.12.36",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:enterprise_manager_ops_center",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.3.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:enterprise_manager_ops_center",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:enterprise_manager_ops_center",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.4.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:enterprise_session_border_controller",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_analytical_applications_infrastructure",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 7.3.3, <= 7.3.5",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_analytical_applications_infrastructure",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.2, <= 8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_analytical_applications_reconciliation_framework",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_analytical_applications_reconciliation_framework",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_asset_liability_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_asset_liability_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_balance_sheet_planning",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_basel_regulatory_capital_basic",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_basel_regulatory_capital_basic",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_basel_regulatory_capital_internal_ratings_based_approach",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_basel_regulatory_capital_internal_ratings_based_approach",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_data_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_data_governance_for_us_regulatory_reporting",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.6, <= 8.0.9",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_data_integration_hub",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.5, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_data_integration_hub",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_enterprise_financial_performance_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_enterprise_financial_performance_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_funds_transfer_pricing",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_funds_transfer_pricing",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_hedge_management_and_ifrs_valuations",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_hedge_management_and_ifrs_valuations",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_institutional_performance_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_institutional_performance_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.0.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.4.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.5.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_measurement_and_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_measurement_and_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_measurement_and_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_loan_loss_forecasting_and_provisioning",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.2, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_loan_loss_forecasting_and_provisioning",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_market_risk_measurement_and_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.5",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_market_risk_measurement_and_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_market_risk_measurement_and_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_price_creation_and_discovery",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_profitability_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_profitability_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_regulatory_reporting_for_de_nederlandsche_bank",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_regulatory_reporting_for_european_banking_authority",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_regulatory_reporting_for_european_banking_authority",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_regulatory_reporting_for_us_federal_reserve",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_retail_customer_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_retail_performance_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_retail_performance_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_revenue_management_and_billing",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.4.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_revenue_management_and_billing",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.4.0.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:fusion_middleware_mapviewer",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.1.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.2.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_translational_research",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_translational_research",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.2.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_translational_research",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.3.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_translational_research",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.3.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_translational_research",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_guest_access",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_guest_access",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.2.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_materials_control",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_simphony",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 19.1.0, <= 19.1.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_simphony",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_simphony",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:identity_manager",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_accounting_analyzer",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.9",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_allocation_manager_for_enterprise_profitability",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_allocation_manager_for_enterprise_profitability",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_data_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_ifrs_17_analyzer",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_ifrs_17_analyzer",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_insbridge_rating_and_underwriting",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 5.0.0.0, <= 5.6.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_insbridge_rating_and_underwriting",
+        "ecosystem": "cpe",
+        "vulnerable_range": "5.6.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_performance_insight",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jd_edwards_enterpriseone_tools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "9.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper",
+        "ecosystem": "cpe",
+        "vulnerable_range": "11.1.1.9.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper_and_adf",
+        "ecosystem": "cpe",
+        "vulnerable_range": "11.1.1.9.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper_and_adf",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.3.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper_and_adf",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:knowledge",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.6.0, <= 8.6.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:peoplesoft_enterprise_peopletools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.55",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:peoplesoft_enterprise_peopletools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.56",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:peoplesoft_enterprise_peopletools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.57",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:peoplesoft_enterprise_peopletools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.58",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:policy_automation",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 12.2.0, <= 12.2.15",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:policy_automation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "10.4.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:policy_automation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:policy_automation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:policy_automation_connector_for_siebel",
+        "ecosystem": "cpe",
+        "vulnerable_range": "10.4.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:policy_automation_for_mobile_devices",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 12.2.0, <= 12.2.15",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_gateway",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 16.2.0, <= 16.2.11",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_gateway",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 17.12.0, <= 17.12.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_gateway",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 18.8.0, <= 18.8.9",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_gateway",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 19.12.0, <= 19.12.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_gateway",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.2.18",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_unifier",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 17.7, <= 17.12",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_unifier",
+        "ecosystem": "cpe",
+        "vulnerable_range": "16.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_unifier",
+        "ecosystem": "cpe",
+        "vulnerable_range": "16.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_unifier",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:real-time_scheduler",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 2.3.0.1, <= 2.3.0.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:rest_data_services",
+        "ecosystem": "cpe",
+        "vulnerable_range": "11.2.0.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:rest_data_services",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.0.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:rest_data_services",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.0.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:rest_data_services",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18c",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:rest_data_services",
+        "ecosystem": "cpe",
+        "vulnerable_range": "19c",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_back_office",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_back_office",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_central_office",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_central_office",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_customer_insights",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_customer_insights",
+        "ecosystem": "cpe",
+        "vulnerable_range": "16.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_customer_management_and_segmentation_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_customer_management_and_segmentation_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "19.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_point-of-service",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_point-of-service",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_returns_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_returns_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:service_bus",
+        "ecosystem": "cpe",
+        "vulnerable_range": "11.1.1.9.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:service_bus",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.3.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:service_bus",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:siebel_mobile_applications",
+        "ecosystem": "cpe",
+        "vulnerable_range": "<= 19.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:siebel_ui_framework",
+        "ecosystem": "cpe",
+        "vulnerable_range": "20.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:storagetek_tape_analytics_sw_tool",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:system_utilities",
+        "ecosystem": "cpe",
+        "vulnerable_range": "19.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:tape_library_acsls",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.5",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:tape_library_acsls",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.5.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:transportation_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "1.4.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:utilities_mobile_workforce_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 2.3.0.1, <= 2.3.0.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:webcenter_sites",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:weblogic_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "10.3.6.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:weblogic_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.3.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:weblogic_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:weblogic_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:weblogic_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "14.1.1.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "joomla:joomla\\!",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 3.0.0, <= 3.9.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "juniper:junos",
+        "ecosystem": "cpe",
+        "vulnerable_range": "21.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "jquery-rails",
+        "ecosystem": "rubygems",
+        "vulnerable_range": "< 4.3.4",
+        "fixed_version": "4.3.4",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "django",
+        "ecosystem": "pip",
+        "vulnerable_range": ">= 2.0a1, < 2.1.9",
+        "fixed_version": "2.1.9",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "django",
+        "ecosystem": "pip",
+        "vulnerable_range": ">= 2.2a1, < 2.2.2",
+        "fixed_version": "2.2.2",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "jquery",
+        "ecosystem": "npm",
+        "vulnerable_range": ">= 1.1.4, < 3.4.0",
+        "fixed_version": "3.4.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "jQuery",
+        "ecosystem": "nuget",
+        "vulnerable_range": ">= 1.1.4, < 3.4.0",
+        "fixed_version": "3.4.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "org.webjars.npm:jquery",
+        "ecosystem": "maven",
+        "vulnerable_range": ">= 1.1.4, < 3.4.0",
+        "fixed_version": "3.4.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "maximebf/debugbar",
+        "ecosystem": "composer",
+        "vulnerable_range": "< 1.19.0",
+        "fixed_version": "1.19.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": null,
+        "ecosystem": null,
+        "vulnerable_range": ">= 963141d57d9ba861216fa85bf8a135f65d2c06be, < 17198299114cf7c5c88a1bdf597a74734751687d, >= b7f9a6908911617be8f83ea1d7daaa3be2453874, < 8e7a1b9546d32ac84f7bfaaaf3ee2439ba7b0c1a, >= 0, <= 35c2f3ca5c935f3d8bde15932a712677c9bbd50f, >= 0, <= d62812dc17ce593beb2ccd4cdbee1a76c95e3fd7, >= 0, <= 2700c5afb6c3936041db413872eea82dc0bd4fe4, >= 497914920385b7016ac9c9367e0198530787adf2, < 9735baff3afe061f98e568c1d1f83d56f3a0212a, >= b73ab73d39dca97a12513e8a9e4f4da4b0676f5f, < c5bc3922f27c93ab3669428a504212adb801400f, >= 9b04d294324d9c76be4b596de4316cb8804e8223, < 91ded4b7776e05ee9633bdc1c458b41c718133e0, >= 0, <= de0e3d3a24a9cadaa67e56cc755f18d9de417a2e, >= 0, <= d6c7b4cf627ab409c595e1c76bf0a8deadbc7feb, >= 0, <= eabb023933ac83947e5d238c4a83b1f5bdbcc738, >= 0, <= 35c2f3ca5c935f3d8bde15932a712677c9bbd50f, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= fb83de52e58e8fb3303de7aa9834f99ae128564a, >= 0, <= 6ffaabfece5d21e41c1ae53c8e3a8f6ffa94582a, >= 0, <= c0d600fe2ce507f28e91acc51d7f63be28521536, >= 0, <= fb83de52e58e8fb3303de7aa9834f99ae128564a, >= 0, <= 6ffaabfece5d21e41c1ae53c8e3a8f6ffa94582a, >= f8d6bbf44160e6d00e71f0172ecf80e78d0f0d3c, <= 49f719f7c4f7c1b69dc35ff8fbdea123e7d88f92, >= 0, <= 497914920385b7016ac9c9367e0198530787adf2, >= 0, <= c0d600fe2ce507f28e91acc51d7f63be28521536, >= 0, <= fb83de52e58e8fb3303de7aa9834f99ae128564a, >= 0, <= 6ffaabfece5d21e41c1ae53c8e3a8f6ffa94582a, >= 0, <= c0d600fe2ce507f28e91acc51d7f63be28521536, >= 0, <= fb83de52e58e8fb3303de7aa9834f99ae128564a, >= 0, <= 6ffaabfece5d21e41c1ae53c8e3a8f6ffa94582a, >= 0, <= ebf9026bb8411de4866824f45ab825ecb41a5f47, >= 0, <= 49e2d2ca6f6c6489b07b9e863150d20a38148a57, >= 0, <= abfe77673a5a6194ef13600e05f1ca2c5dd59db8, >= 647bfab79e6ee1fddb339c50152315e479d4fe8f, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= 766daeb0449588db7207606c22bcf7b59d1f6f9b, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= 647bfab79e6ee1fddb339c50152315e479d4fe8f, >= 0, <= 766daeb0449588db7207606c22bcf7b59d1f6f9b, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= d918ae1ecc4e0fb86ae9296da1a39f02bd36cde4, >= 0, <= 766daeb0449588db7207606c22bcf7b59d1f6f9b, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= f25feddd5ca56e6155e26e52667ab4fef87bb19d, >= 0, <= 766daeb0449588db7207606c22bcf7b59d1f6f9b, >= f25feddd5ca56e6155e26e52667ab4fef87bb19d, <= 766daeb0449588db7207606c22bcf7b59d1f6f9b, >= 0, <= 766daeb0449588db7207606c22bcf7b59d1f6f9b, >= 0, <= f7e125ce37fbf52b9581c2f9fade7ff33267bb42, >= 0, <= 766daeb0449588db7207606c22bcf7b59d1f6f9b, >= 0, <= 943ecef3c0bc9822338252a7df6419aeb9253c9d, >= 9b04d294324d9c76be4b596de4316cb8804e8223, <= 29c2941b8610cee425621c7e601196f5a9539069, >= 0, <= 7f1be96427e86c9ba5665f7c8c2e713cae15edec, >= 0, <= 90cb860744586a9287c7674f7032fed818a01384, >= 0, <= b73ab73d39dca97a12513e8a9e4f4da4b0676f5f, >= 0, <= 9798f28fe983bea94fb06ff52423355688066780, >= c1acb7e6973bd549fe35a02659fe851ff1a37dfe, <= 4e45f91fdaf662f6844153b3cf3bc87f1defadb1, >= 0, <= e04287312687ae500d6bea8e9c4b31ab1c4b7afe, >= 0, <= 590fd61dfacabe0f776880864667631ff8ec9014, >= 49c1e96a77e192ab5cd1071df88ba2e48683218e, <= e04287312687ae500d6bea8e9c4b31ab1c4b7afe, >= 0, <= 49c1e96a77e192ab5cd1071df88ba2e48683218e, >= 0, <= b6f66c99da6757381c2aa2b276bc259ad7b40f0b, >= 0, <= 526934f5a6a71618844d316bb105a758d6f7371b, >= 0, <= af5a21f6c9e5f49f652f49504f7bc64eab216602, >= c1acb7e6973bd549fe35a02659fe851ff1a37dfe, <= bbdf775fbee26d275ce60ea466b778e4694210a1, >= 0, < b7fc909edda2d8cf63d0eaffe9bd12f33e492ad3, >= 0, <= c2c017bc1527d350bbd80ea27976d9db71a2f591, >= 0, <= b7fc909edda2d8cf63d0eaffe9bd12f33e492ad3, >= 0, <= 4f2fae08f23b54ce09322e62e73cce6161b8d3cb, >= 0, <= d0d2d9b9b004cf0c6763c871646e01ca67579253, >= 0, <= f71eeda0fac4ec1442e631e90ff0703a0fb4ac96, >= 0, <= 32b00373b3f42e5cdcb709df53f3b08b7184a944, >= 0, <= b7fc909edda2d8cf63d0eaffe9bd12f33e492ad3, >= 0, <= 07458abcaf02b5e991223953081bb0dd5240e2c1, < 753d591aea698e57d6db58c9f722cd0808619b1b",
+        "fixed_version": "17198299114cf7c5c88a1bdf597a74734751687d",
+        "sources": [
+          "osv"
+        ]
+      }
+    ]
+  },
+  {
+    "cve_id": "CVE-2015-9251",
+    "ids": {
+      "cve_id": "CVE-2015-9251",
+      "ghsa_id": [
+        {
+          "value": "GHSA-rmxg-73gg-4p98",
+          "sources": [
+            "ghsa",
+            "osv"
+          ]
+        }
+      ],
+      "osv_id": [
+        {
+          "value": "CVE-2015-9251",
+          "sources": [
+            "osv"
+          ]
+        }
+      ],
+      "aliases": [
+        "CVE-2015-9251",
+        "GHSA-rmxg-73gg-4p98"
+      ]
+    },
+    "severity": [
+      {
+        "score": 6.1,
+        "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "label": "MEDIUM",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "score": 6.1,
+        "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "label": "medium",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "score": null,
+        "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+        "label": null,
+        "sources": [
+          "osv"
+        ]
+      }
+    ],
+    "cwe_ids": [
+      {
+        "value": "CWE-79",
+        "sources": [
+          "nvd",
+          "ghsa"
+        ]
+      }
+    ],
+    "affected": [
+      {
+        "package": "jquery:jquery",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 3.0.0",
+        "fixed_version": "3.0.0",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:agile_product_lifecycle_management_for_process",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2.3.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_platform",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.6.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_platform",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.6.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:banking_platform",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.6.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:business_process_management_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "11.1.1.9.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:business_process_management_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.3.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:business_process_management_suite",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_converged_application_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 7.0.0.1",
+        "fixed_version": "7.0.0.1",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_interactive_session_recorder",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_interactive_session_recorder",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_interactive_session_recorder",
+        "ecosystem": "cpe",
+        "vulnerable_range": "6.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_services_gatekeeper",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 6.1.0.4.0",
+        "fixed_version": "6.1.0.4.0",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:communications_webrtc_session_controller",
+        "ecosystem": "cpe",
+        "vulnerable_range": "< 7.2",
+        "fixed_version": "7.2",
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:endeca_information_discovery_studio",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:endeca_information_discovery_studio",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:enterprise_manager_ops_center",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:enterprise_manager_ops_center",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.3.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:enterprise_operations_monitor",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:enterprise_operations_monitor",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_analytical_applications_infrastructure",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 7.3.3, <= 7.3.5",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_analytical_applications_infrastructure",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.0, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_asset_liability_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_data_integration_hub",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.5, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_funds_transfer_pricing",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_hedge_management_and_ifrs_valuations",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_liquidity_risk_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.2, <= 8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_loan_loss_forecasting_and_provisioning",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.2, <= 8.0.7",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_market_risk_measurement_and_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.5",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_market_risk_measurement_and_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_profitability_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 8.0.4, <= 8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_reconciliation_framework",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.5",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:financial_services_reconciliation_framework",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.0.6",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:fusion_middleware_mapviewer",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_foundation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "7.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:healthcare_translational_research",
+        "ecosystem": "cpe",
+        "vulnerable_range": "3.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_cruise_fleet_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "9.0.11",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_guest_access",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.2.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_guest_access",
+        "ecosystem": "cpe",
+        "vulnerable_range": "4.2.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_materials_control",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:hospitality_reporting_and_analytics",
+        "ecosystem": "cpe",
+        "vulnerable_range": "9.1.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_insbridge_rating_and_underwriting",
+        "ecosystem": "cpe",
+        "vulnerable_range": "5.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_insbridge_rating_and_underwriting",
+        "ecosystem": "cpe",
+        "vulnerable_range": "5.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:insurance_insbridge_rating_and_underwriting",
+        "ecosystem": "cpe",
+        "vulnerable_range": "5.5",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jd_edwards_enterpriseone_tools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "9.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper",
+        "ecosystem": "cpe",
+        "vulnerable_range": "11.1.1.9.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.3.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:jdeveloper",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:oss_support_tools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "19.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:peoplesoft_enterprise_peopletools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.55",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:peoplesoft_enterprise_peopletools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.56",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:peoplesoft_enterprise_peopletools",
+        "ecosystem": "cpe",
+        "vulnerable_range": "8.57",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_gateway",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_gateway",
+        "ecosystem": "cpe",
+        "vulnerable_range": "16.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_gateway",
+        "ecosystem": "cpe",
+        "vulnerable_range": "17.12",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_unifier",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 17.1, <= 17.12",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_unifier",
+        "ecosystem": "cpe",
+        "vulnerable_range": "16.1",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_unifier",
+        "ecosystem": "cpe",
+        "vulnerable_range": "16.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:primavera_unifier",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.8",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:real-time_scheduler",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_allocation",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.0.2",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_customer_insights",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_customer_insights",
+        "ecosystem": "cpe",
+        "vulnerable_range": "16.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_invoice_matching",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_sales_audit",
+        "ecosystem": "cpe",
+        "vulnerable_range": "15.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_workforce_management_software",
+        "ecosystem": "cpe",
+        "vulnerable_range": "1.60.9",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:retail_workforce_management_software",
+        "ecosystem": "cpe",
+        "vulnerable_range": "1.64.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:service_bus",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.3.0.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:service_bus",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:siebel_ui_framework",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.10",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:siebel_ui_framework",
+        "ecosystem": "cpe",
+        "vulnerable_range": "18.11",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:utilities_framework",
+        "ecosystem": "cpe",
+        "vulnerable_range": ">= 4.3.0.1, <= 4.3.0.4",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:utilities_mobile_workforce_management",
+        "ecosystem": "cpe",
+        "vulnerable_range": "2.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:webcenter_sites",
+        "ecosystem": "cpe",
+        "vulnerable_range": "11.1.1.8.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:weblogic_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.1.3.0",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "oracle:weblogic_server",
+        "ecosystem": "cpe",
+        "vulnerable_range": "12.2.1.3",
+        "fixed_version": null,
+        "sources": [
+          "nvd"
+        ]
+      },
+      {
+        "package": "jQuery",
+        "ecosystem": "nuget",
+        "vulnerable_range": "< 1.12.2",
+        "fixed_version": "1.12.2",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "jQuery",
+        "ecosystem": "nuget",
+        "vulnerable_range": ">= 1.12.3, < 3.0.0",
+        "fixed_version": "3.0.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "jquery",
+        "ecosystem": "npm",
+        "vulnerable_range": "< 1.12.2",
+        "fixed_version": "1.12.2",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "jquery",
+        "ecosystem": "npm",
+        "vulnerable_range": ">= 1.12.3, < 3.0.0",
+        "fixed_version": "3.0.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "jquery-rails",
+        "ecosystem": "rubygems",
+        "vulnerable_range": "< 4.2.0",
+        "fixed_version": "4.2.0",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "org.webjars.npm:jquery",
+        "ecosystem": "maven",
+        "vulnerable_range": "< 1.12.2",
+        "fixed_version": "1.12.2",
+        "sources": [
+          "ghsa"
+        ]
+      },
+      {
+        "package": "org.webjars.npm:jquery",
+        "ecosystem": "maven",
+        "vulnerable_range": ">= 1.12.3, < 3.0.0",
+        "fixed_version": "3.0.0",
+        "sources": [
+          "ghsa"
+        ]
+      }
+    ]
+  }
+]

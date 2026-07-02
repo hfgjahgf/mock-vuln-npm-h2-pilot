@@ -1,0 +1,20 @@
+[
+  {
+    "stratum": "NVD-hard",
+    "cve_id": "CVE-2026-25228",
+    "package": "signalk-server",
+    "ecosystem": "npm",
+    "vulnerable_version": "2.20.2",
+    "reference_fix_versions": ["2.20.3"],
+    "note": "NVD-only misses (CPE-schema); canonical catches via GHSA/OSV union"
+  },
+  {
+    "stratum": "GHSA-hard",
+    "cve_id": "CVE-2026-33285",
+    "package": "liquidjs",
+    "ecosystem": "npm",
+    "vulnerable_version": "10.25.0",
+    "reference_fix_versions": ["10.25.1"],
+    "note": "GHSA emit vulnerable_range only (no fixed_version tier-A); NVD catches"
+  }
+]
