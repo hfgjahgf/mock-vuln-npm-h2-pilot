@@ -24,20 +24,37 @@ def load_json(p):
 
 
 def build_canonical_index(canonical_snapshot):
-    """Build {cve_id: {package: sources_labels}} index for label lookup."""
+    """Build {vuln_id: {package: sources_labels}} index for label lookup.
+
+    Keys include CVE_id AND all its alias IDs (GHSA-*, aliases) so we can lookup
+    by GHSA-* IDs (which is what Grype outputs for npm packages).
+    """
     idx = {}
     for r in canonical_snapshot:
         cve = r.get('cve_id')
         if not cve:
             continue
+        # Collect all IDs for this record (CVE + GHSA + aliases)
+        keys = {cve}
+        ids = r.get('ids') or {}
+        for g in (ids.get('ghsa_id') or []):
+            if isinstance(g, dict):
+                v = g.get('value')
+                if v:
+                    keys.add(v)
+        for al in (ids.get('aliases') or []):
+            keys.add(al)
+
         for a in (r.get('affected') or []):
             pkg = a.get('package')
             if not pkg:
                 continue
-            idx.setdefault(cve, {}).setdefault(pkg, [])
-            for s in (a.get('sources') or []):
-                if s not in idx[cve][pkg]:
-                    idx[cve][pkg].append(s)
+            sources_here = list(a.get('sources') or [])
+            for key in keys:
+                idx.setdefault(key, {}).setdefault(pkg, [])
+                for s in sources_here:
+                    if s not in idx[key][pkg]:
+                        idx[key][pkg].append(s)
     return idx
 
 

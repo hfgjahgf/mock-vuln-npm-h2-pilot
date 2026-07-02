@@ -96,22 +96,54 @@ def parse_canonical_output(path):
     return entries
 
 
-def compute_arm_metrics(entries, gt_tuples):
-    """For each GT tuple, check coverage + actionability + traceability + tier composition."""
+def build_cve_alias_map(canonical_snapshot_path):
+    """Build {CVE_id: set(alias_ids)} from canonical snapshot ids.ghsa_id + ids.aliases.
+
+    Grype for npm outputs GHSA-* as primary_id (no CVE alias in relatedVulnerabilities).
+    We map CVE → set of alias IDs so filter can match by any of them.
+    """
+    if not Path(canonical_snapshot_path).exists():
+        return {}
+    snap = json.loads(Path(canonical_snapshot_path).read_text(encoding='utf-8'))
+    alias_map = {}
+    for r in snap:
+        cve = r.get('cve_id')
+        if not cve:
+            continue
+        ids = r.get('ids') or {}
+        aliases = set(ids.get('aliases') or [])
+        for g in (ids.get('ghsa_id') or []):
+            if isinstance(g, dict):
+                v = g.get('value')
+                if v:
+                    aliases.add(v)
+        aliases.add(cve)
+        alias_map[cve] = aliases
+    return alias_map
+
+
+def compute_arm_metrics(entries, gt_tuples, cve_alias_map=None):
+    """For each GT tuple, check coverage + actionability + traceability + tier composition.
+
+    cve_alias_map: {CVE_id: set(alias_ids incl GHSA)}. If provided, matches by any alias.
+    (Needed because Grype for npm outputs GHSA-* primary IDs without CVE aliases.)
+    """
     per_tuple = []
+    alias_map = cve_alias_map or {}
     for gt in gt_tuples:
         target_cve = gt['cve_id']
         target_pkg = gt['package']
+        target_alias_set = alias_map.get(target_cve, {target_cve})
         gt_fixes = {normalize_version(v) for v in gt.get('reference_fix_versions', [])}
         gt_fixes.discard(None)
 
         # Filter entries matching target_cve × target_pkg
-        # Match by CVE ID appearing in ANY of the entry's IDs (primary + related aliases)
+        # Match if entry's all_ids intersects target_alias_set (CVE or GHSA)
         matched = []
         for e in entries:
             e_pkg = (e.get('package') or '').lower()
-            all_ids = e.get('all_ids') or ([e.get('primary_id')] if e.get('primary_id') else [])
-            if target_cve in all_ids and target_pkg.lower() == e_pkg:
+            all_ids = set(e.get('all_ids') or ([e.get('primary_id')] if e.get('primary_id') else []))
+            if all_ids & target_alias_set and target_pkg.lower() == e_pkg:
                 matched.append(e)
 
         # Compute tier
@@ -192,8 +224,14 @@ def main():
     for arm, e in arm_entries.items():
         print(f'  {arm}: {len(e)} entries')
 
+    # Build CVE↔GHSA alias map from canonical snapshot (Grype uses GHSA-* for npm)
+    alias_map = build_cve_alias_map('canonical_data/canonical_subset.json')
+    print(f'CVE alias map: {len(alias_map)} entries')
+    for cve, aliases in alias_map.items():
+        print(f'  {cve} → {sorted(aliases)}')
+
     # Compute metrics per arm
-    arm_metrics = {arm: compute_arm_metrics(entries, gt_tuples)
+    arm_metrics = {arm: compute_arm_metrics(entries, gt_tuples, alias_map)
                    for arm, entries in arm_entries.items()}
 
     # Attribution deltas
