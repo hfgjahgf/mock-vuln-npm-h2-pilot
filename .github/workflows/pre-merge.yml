@@ -43,9 +43,16 @@ jobs:
       - name: Capture Grype DB metadata (freshness disclosure)
         id: grype_db
         run: |
-          grype db status --output json > grype_db_metadata.json
-          cat grype_db_metadata.json
-          echo "built=$(jq -r '.built' grype_db_metadata.json)" >> $GITHUB_OUTPUT
+          # DB not yet populated — trigger download first (first grype invocation auto-updates)
+          grype db update 2>&1 | tail -5 || true
+          # Capture status (JSON form first, fall back to text)
+          grype db status -o json > grype_db_metadata.json 2>/dev/null || \
+            grype db status > grype_db_metadata.json 2>&1 || true
+          cat grype_db_metadata.json || echo "no metadata"
+          # Extract built timestamp (best-effort)
+          BUILT=$(jq -r '.built // .path // "unknown"' grype_db_metadata.json 2>/dev/null || \
+                  grep -i "built:" grype_db_metadata.json | head -1 | sed 's/.*: *//' || echo "unknown")
+          echo "built=${BUILT}" >> $GITHUB_OUTPUT
 
       - name: Run Grype on lockfile
         run: |
