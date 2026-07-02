@@ -1,13 +1,465 @@
 [
   {
     "ecosystem": "npm",
+    "cve_id": "CVE-2026-31998",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-28458",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-27003",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32059",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-28456",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32055",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-31990",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32043",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32034",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32007",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32013",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32054",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32033",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32302",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32058",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-27646",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32023",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-27009",
+    "package": "openclaw",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-28458",
+    "package": "moltbot",
+    "reference_fix_versions": [
+      "2026.5.24-beta.2"
+    ],
+    "vulnerable_version": "2026.5.23",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
     "cve_id": "CVE-2026-25228",
     "package": "signalk-server",
     "reference_fix_versions": [
       "2.20.3"
     ],
     "vulnerable_version": "2.20.2",
-    "confidence": "high"
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-1245",
+    "package": "binary-parser",
+    "reference_fix_versions": [
+      "2.3.0"
+    ],
+    "vulnerable_version": "2.2.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-3449",
+    "package": "@tootallnate/once",
+    "reference_fix_versions": [
+      "3.0.1"
+    ],
+    "vulnerable_version": "3.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-24043",
+    "package": "jspdf",
+    "reference_fix_versions": [
+      "4.1.0"
+    ],
+    "vulnerable_version": "4.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-24040",
+    "package": "jspdf",
+    "reference_fix_versions": [
+      "4.1.0"
+    ],
+    "vulnerable_version": "4.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-25535",
+    "package": "jspdf",
+    "reference_fix_versions": [
+      "4.2.0"
+    ],
+    "vulnerable_version": "4.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-25940",
+    "package": "jspdf",
+    "reference_fix_versions": [
+      "4.2.0"
+    ],
+    "vulnerable_version": "4.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-49276",
+    "package": "uptime-kuma",
+    "reference_fix_versions": [
+      "1.23.7"
+    ],
+    "vulnerable_version": "1.23.6",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-54419",
+    "package": "@node-saml/node-saml",
+    "reference_fix_versions": [
+      "5.1.0"
+    ],
+    "vulnerable_version": "5.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-54419",
+    "package": "passport-saml",
+    "reference_fix_versions": [
+      "5.1.0"
+    ],
+    "vulnerable_version": "5.0.0",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-54419",
+    "package": "@node-saml/passport-saml",
+    "reference_fix_versions": [
+      "5.1.0"
+    ],
+    "vulnerable_version": "5.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-27574",
+    "package": "@oneuptime/common",
+    "reference_fix_versions": [
+      "10.1.4"
+    ],
+    "vulnerable_version": "10.1.3",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-64166",
+    "package": "mercurius",
+    "reference_fix_versions": [
+      "16.4.0"
+    ],
+    "vulnerable_version": "16.3.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-6944",
+    "package": "@backstage/backend-app-api",
+    "reference_fix_versions": [
+      "1.43.3"
+    ],
+    "vulnerable_version": "1.43.2",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2018-14042",
+    "package": "bootstrap-sass",
+    "reference_fix_versions": [
+      "4.1.2"
+    ],
+    "vulnerable_version": "3.3.0",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2019-8331",
+    "package": "bootstrap-sass",
+    "reference_fix_versions": [
+      "4.3.1"
+    ],
+    "vulnerable_version": "3.3.0",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2016-10735",
+    "package": "bootstrap-sass",
+    "reference_fix_versions": [
+      "3.4.0"
+    ],
+    "vulnerable_version": "3.3.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2018-14042",
+    "package": "bootstrap",
+    "reference_fix_versions": [
+      "4.1.2"
+    ],
+    "vulnerable_version": "3.3.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2019-8331",
+    "package": "bootstrap",
+    "reference_fix_versions": [
+      "4.3.1"
+    ],
+    "vulnerable_version": "3.3.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2016-10735",
+    "package": "bootstrap",
+    "reference_fix_versions": [
+      "3.4.0"
+    ],
+    "vulnerable_version": "3.3.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-54586",
+    "package": "@finos/git-proxy",
+    "reference_fix_versions": [
+      "1.19.2"
+    ],
+    "vulnerable_version": "1.19.1",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-64747",
+    "package": "directus",
+    "reference_fix_versions": [
+      "11.13.0"
+    ],
+    "vulnerable_version": "11.12.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-46493",
+    "package": "@evershop/evershop",
+    "reference_fix_versions": [
+      "1.0.0-rc.9"
+    ],
+    "vulnerable_version": "0.0.0",
+    "confidence": "high",
+    "stratum": "population"
   },
   {
     "ecosystem": "npm",
@@ -17,27 +469,96 @@
       "4.17.11"
     ],
     "vulnerable_version": "4.17.10",
-    "confidence": "high"
+    "confidence": "high",
+    "stratum": "population"
   },
   {
     "ecosystem": "npm",
-    "cve_id": "CVE-2021-3749",
-    "package": "axios",
+    "cve_id": "CVE-2019-1010266",
+    "package": "lodash-es",
     "reference_fix_versions": [
-      "0.30.0"
+      "4.17.11"
     ],
-    "vulnerable_version": "0.29.0",
-    "confidence": "high"
+    "vulnerable_version": "4.17.10",
+    "confidence": "high",
+    "stratum": "population"
   },
   {
     "ecosystem": "npm",
-    "cve_id": "CVE-2022-2596",
-    "package": "node-fetch",
+    "cve_id": "CVE-2019-1010266",
+    "package": "lodash-amd",
     "reference_fix_versions": [
-      "3.2.10"
+      "4.17.11"
     ],
-    "vulnerable_version": "3.2.9",
-    "confidence": "high"
+    "vulnerable_version": "4.17.10",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-46234",
+    "package": "browserify-sign",
+    "reference_fix_versions": [
+      "4.2.2"
+    ],
+    "vulnerable_version": "4.2.1",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-44270",
+    "package": "postcss",
+    "reference_fix_versions": [
+      "8.4.31"
+    ],
+    "vulnerable_version": "8.2.13",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2021-23368",
+    "package": "postcss",
+    "reference_fix_versions": [
+      "8.2.14"
+    ],
+    "vulnerable_version": "8.2.13",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-22037",
+    "package": "@fastify/express",
+    "reference_fix_versions": [
+      "4.0.3"
+    ],
+    "vulnerable_version": "4.0.2",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-22610",
+    "package": "@angular/core",
+    "reference_fix_versions": [
+      "21.2.6"
+    ],
+    "vulnerable_version": "21.2.5",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-22610",
+    "package": "@angular/compiler",
+    "reference_fix_versions": [
+      "21.2.6"
+    ],
+    "vulnerable_version": "21.2.5",
+    "confidence": "high",
+    "stratum": "population"
   },
   {
     "ecosystem": "npm",
@@ -47,7 +568,536 @@
       "3.0.0"
     ],
     "vulnerable_version": "2.0.0",
-    "confidence": "high"
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2020-11023",
+    "package": "jquery",
+    "reference_fix_versions": [
+      "3.5.0"
+    ],
+    "vulnerable_version": "2.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2024-45812",
+    "package": "vite",
+    "reference_fix_versions": [
+      "7.0.0-beta.0"
+    ],
+    "vulnerable_version": "6.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-31125",
+    "package": "vite",
+    "reference_fix_versions": [
+      "7.0.0-beta.0"
+    ],
+    "vulnerable_version": "6.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-62522",
+    "package": "vite",
+    "reference_fix_versions": [
+      "7.1.11"
+    ],
+    "vulnerable_version": "6.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2024-57190",
+    "package": "erxes",
+    "reference_fix_versions": [
+      "2.17.20"
+    ],
+    "vulnerable_version": "2.17.19",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-66202",
+    "package": "astro",
+    "reference_fix_versions": [
+      "create-astro@5.0.0-beta.1"
+    ],
+    "vulnerable_version": "create-astro@5.0.0-beta.1",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-33671",
+    "package": "picomatch",
+    "reference_fix_versions": [
+      "4.0.4"
+    ],
+    "vulnerable_version": "4.0.3",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2024-4367",
+    "package": "pdfjs-dist",
+    "reference_fix_versions": [
+      "4.2.67"
+    ],
+    "vulnerable_version": "4.2.66",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-47440",
+    "package": "gladys",
+    "reference_fix_versions": [
+      "4.30.0"
+    ],
+    "vulnerable_version": "4.29.0",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-37259",
+    "package": "matrix-react-sdk",
+    "reference_fix_versions": [
+      "3.77.1"
+    ],
+    "vulnerable_version": "3.77.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2021-3749",
+    "package": "axios",
+    "reference_fix_versions": [
+      "0.30.0"
+    ],
+    "vulnerable_version": "0.29.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2019-10742",
+    "package": "axios",
+    "reference_fix_versions": [
+      "0.30.0"
+    ],
+    "vulnerable_version": "0.29.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-58754",
+    "package": "axios",
+    "reference_fix_versions": [
+      "1.12.0"
+    ],
+    "vulnerable_version": "0.29.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-25639",
+    "package": "axios",
+    "reference_fix_versions": [
+      "1.13.5"
+    ],
+    "vulnerable_version": "0.29.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-54881",
+    "package": "mermaid",
+    "reference_fix_versions": [
+      "@mermaid-js/layout-elk@0.1.3"
+    ],
+    "vulnerable_version": "@mermaid-js/layout-elk@0.1.3",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-24006",
+    "package": "seroval",
+    "reference_fix_versions": [
+      "1.4.2"
+    ],
+    "vulnerable_version": "1.4.1",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-49141",
+    "package": "@haxtheweb/haxcms-nodejs",
+    "reference_fix_versions": [
+      "26.0.0"
+    ],
+    "vulnerable_version": "25.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-26118",
+    "package": "@azure/mcp",
+    "reference_fix_versions": [
+      "Azure.Mcp.Server-2.0.0-beta.23"
+    ],
+    "vulnerable_version": "Azure.Mcp.Server-2.0.0-beta.23",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2019-15478",
+    "package": "status-board",
+    "reference_fix_versions": [
+      "1.1.82"
+    ],
+    "vulnerable_version": "1.1.81",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-32723",
+    "package": "@nyariv/sandboxjs",
+    "reference_fix_versions": [
+      "0.9.3"
+    ],
+    "vulnerable_version": "0.8.30",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-25881",
+    "package": "@nyariv/sandboxjs",
+    "reference_fix_versions": [
+      "0.8.31"
+    ],
+    "vulnerable_version": "0.8.30",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-4863",
+    "package": "electron",
+    "reference_fix_versions": [
+      "1.4.0-rc1"
+    ],
+    "vulnerable_version": "1.3.0",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-26149",
+    "package": "quill-mention",
+    "reference_fix_versions": [
+      "6.0.2"
+    ],
+    "vulnerable_version": "6.0.1",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-23515",
+    "package": "@signalk/set-system-time",
+    "reference_fix_versions": [
+      "1.4.0"
+    ],
+    "vulnerable_version": "1.3.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-33285",
+    "package": "liquidjs",
+    "reference_fix_versions": [
+      "10.25.1"
+    ],
+    "vulnerable_version": "10.25.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-66414",
+    "package": "@modelcontextprotocol/sdk",
+    "reference_fix_versions": [
+      "1.24.0"
+    ],
+    "vulnerable_version": "1.23.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-27212",
+    "package": "swiper",
+    "reference_fix_versions": [
+      "12.1.2"
+    ],
+    "vulnerable_version": "12.1.1",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-59430",
+    "package": "@meshconnect/web-link-sdk",
+    "reference_fix_versions": [
+      "3.3.2"
+    ],
+    "vulnerable_version": "3.3.1",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-57752",
+    "package": "next",
+    "reference_fix_versions": [
+      "16.2.1-canary.44"
+    ],
+    "vulnerable_version": "16.2.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2022-21721",
+    "package": "next",
+    "reference_fix_versions": [
+      "16.2.1-canary.44"
+    ],
+    "vulnerable_version": "16.2.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2022-2596",
+    "package": "node-fetch",
+    "reference_fix_versions": [
+      "3.2.10"
+    ],
+    "vulnerable_version": "2.6.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2020-15168",
+    "package": "node-fetch",
+    "reference_fix_versions": [
+      "2.6.1"
+    ],
+    "vulnerable_version": "2.6.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2019-10773",
+    "package": "yarn",
+    "reference_fix_versions": [
+      "1.22.0"
+    ],
+    "vulnerable_version": "1.21.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-31802",
+    "package": "tar",
+    "reference_fix_versions": [
+      "7.5.11"
+    ],
+    "vulnerable_version": "7.5.10",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-59834",
+    "package": "adb-mcp",
+    "reference_fix_versions": [
+      "0.1.1"
+    ],
+    "vulnerable_version": "0.1.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-69202",
+    "package": "axios-cache-interceptor",
+    "reference_fix_versions": [
+      "1.11.1"
+    ],
+    "vulnerable_version": "1.11.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-48996",
+    "package": "@haxtheweb/open-apis",
+    "reference_fix_versions": [
+      "26.0.0"
+    ],
+    "vulnerable_version": "25.0.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-3520",
+    "package": "multer",
+    "reference_fix_versions": [
+      "2.1.1"
+    ],
+    "vulnerable_version": "2.1.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-28154",
+    "package": "webpack",
+    "reference_fix_versions": [
+      "5.76.0"
+    ],
+    "vulnerable_version": "5.75.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-24134",
+    "package": "studiocms",
+    "reference_fix_versions": [
+      "studiocms@0.4.1"
+    ],
+    "vulnerable_version": "studiocms@0.4.1",
+    "confidence": "medium",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-33732",
+    "package": "srvx",
+    "reference_fix_versions": [
+      "0.11.13"
+    ],
+    "vulnerable_version": "0.11.12",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-24398",
+    "package": "hono",
+    "reference_fix_versions": [
+      "4.11.7"
+    ],
+    "vulnerable_version": "4.11.6",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-23527",
+    "package": "h3",
+    "reference_fix_versions": [
+      "1.15.5"
+    ],
+    "vulnerable_version": "1.15.4",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-26156",
+    "package": "chromedriver",
+    "reference_fix_versions": [
+      "134.0.4"
+    ],
+    "vulnerable_version": "134.0.3",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-45311",
+    "package": "fsevents",
+    "reference_fix_versions": [
+      "1.2.12"
+    ],
+    "vulnerable_version": "1.2.11",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2025-11849",
+    "package": "mammoth",
+    "reference_fix_versions": [
+      "1.11.0"
+    ],
+    "vulnerable_version": "1.10.0",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2023-3672",
+    "package": "webmention.js",
+    "reference_fix_versions": [
+      "0.5.6"
+    ],
+    "vulnerable_version": "0.5.5",
+    "confidence": "high",
+    "stratum": "population"
+  },
+  {
+    "ecosystem": "npm",
+    "cve_id": "CVE-2026-31865",
+    "package": "elysia",
+    "reference_fix_versions": [
+      "1.4.27"
+    ],
+    "vulnerable_version": "1.4.26",
+    "confidence": "high",
+    "stratum": "population"
   },
   {
     "ecosystem": "pip",
