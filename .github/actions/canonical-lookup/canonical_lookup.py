@@ -59,21 +59,22 @@ def build_canonical_index(canonical_snapshot):
 
 
 def process(grype_output, canonical_index):
-    """Normalize + dedup + attach sources labels.
+    """Normalize + dedup-by-union + attach sources labels.
 
-    Preserves all IDs (primary + related aliases) so downstream can match by CVE
-    even when Grype's primary ID is GHSA-*.
-    Also looks up sources in canonical snapshot by ANY of the entry's IDs.
+    When Grype emits multiple matches for the same (primary_id, package) — e.g.
+    two GHSA advisories covering different fix branches for the same CVE — we
+    UNION their fix_versions / all_ids / sources into a single output entry
+    instead of dropping later matches. This makes A3 (enrichment) strictly
+    equal to A2 (grype_native) on coverage, plus canonical sources[] labels.
     """
     out_matches = []
-    seen = set()
+    idx_by_key = {}
     for m in grype_output.get('matches') or []:
         v = m.get('vulnerability') or {}
         primary = v.get('id')
         artifact = m.get('artifact') or {}
         pkg = artifact.get('name')
 
-        # Collect all IDs (primary + related for CVE-alias linking)
         related = v.get('relatedVulnerabilities') or []
         all_ids = [primary] if primary else []
         for rv in related:
@@ -81,34 +82,41 @@ def process(grype_output, canonical_index):
             if rid and rid not in all_ids:
                 all_ids.append(rid)
 
-        # Dedup by (primary_id, package)
-        key = (primary, pkg)
-        if key in seen:
-            continue
-        seen.add(key)
-
-        # Normalize fix versions
         fix = v.get('fix') or {}
         norm_versions = [normalize_version(fv) for fv in (fix.get('versions') or [])]
         norm_versions = [x for x in norm_versions if x is not None]
 
-        # Attach sources labels: look up ANY of the IDs in canonical index
         sources = []
         for candidate_id in all_ids:
             for s in canonical_index.get(candidate_id, {}).get(pkg, []):
                 if s not in sources:
                     sources.append(s)
 
-        out_matches.append({
-            'cve_id': primary,          # backward-compat field
-            'primary_id': primary,
-            'all_ids': all_ids,          # preserve alias chain for downstream matching
-            'package': pkg,
-            'version': artifact.get('version'),
-            'fix_versions': norm_versions,
-            'namespace': v.get('namespace'),
-            'sources': sources,          # <-- canonical's traceability contribution
-        })
+        key = (primary, pkg)
+        if key in idx_by_key:
+            entry = idx_by_key[key]
+            for x in norm_versions:
+                if x not in entry['fix_versions']:
+                    entry['fix_versions'].append(x)
+            for x in all_ids:
+                if x not in entry['all_ids']:
+                    entry['all_ids'].append(x)
+            for x in sources:
+                if x not in entry['sources']:
+                    entry['sources'].append(x)
+        else:
+            entry = {
+                'cve_id': primary,
+                'primary_id': primary,
+                'all_ids': list(all_ids),
+                'package': pkg,
+                'version': artifact.get('version'),
+                'fix_versions': list(norm_versions),
+                'namespace': v.get('namespace'),
+                'sources': list(sources),
+            }
+            idx_by_key[key] = entry
+            out_matches.append(entry)
 
     return {'matches': out_matches, 'total': len(out_matches)}
 
