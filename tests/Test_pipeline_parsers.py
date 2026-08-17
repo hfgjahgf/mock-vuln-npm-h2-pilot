@@ -29,14 +29,26 @@ import run_environment as RE          # noqa: E402
 
 # --------------------------------------------------------------------- fixtures
 
+# Titles here are PROSE, as they are in real npm audit output - the advisory id lives in
+# `url` (347/347 `via` dicts across both R37e pre-check runs) and the CVEs in `cve`.
+# The earlier fixture put ids in the titles, which no real report does, and that is why
+# reading titles looked harmless (R37f-P0).
 NPM_AUDIT = {
     'auditReportVersion': 2,
     'vulnerabilities': {
         'left-pad': {
             'name': 'left-pad', 'severity': 'high',
-            'via': [{'source': 1234, 'name': 'left-pad', 'title': 'GHSA-aaaa-bbbb-cccc',
+            'via': [{'source': 1234, 'name': 'left-pad',
+                     'title': 'left-pad pads incorrectly on very long input',
                      'url': 'https://github.com/advisories/GHSA-aaaa-bbbb-cccc',
-                     'cve': ['CVE-2026-0001'], 'range': '<1.3.0'}],
+                     'cve': ['CVE-2026-0001'], 'range': '<1.3.0'},
+                    # The shape that caused R37f-P0: a follow-up advisory whose title
+                    # CITES the advisory it incompletely fixes, with its own `cve` null.
+                    {'source': 1235, 'name': 'left-pad',
+                     'title': 'left-pad still pads incorrectly '
+                              '(incomplete fix for CVE-2026-9999)',
+                     'url': 'https://github.com/advisories/GHSA-incomplete-fix',
+                     'cve': None, 'range': '<1.4.0'}],
             'range': '<1.3.0',
             'fixAvailable': {'name': 'left-pad', 'version': '2.0.0',
                              'isSemVerMajor': True},
@@ -46,12 +58,14 @@ NPM_AUDIT = {
         # answer (R37c-P0).
         'simple-fix-pkg': {
             'name': 'simple-fix-pkg',
-            'via': [{'source': 7, 'title': 'GHSA-1111-2222-3333'}],
+            'via': [{'source': 7, 'title': 'prototype pollution in simple-fix-pkg',
+                     'url': 'https://github.com/advisories/GHSA-1111-2222-3333'}],
             'fixAvailable': True,
         },
         'no-fix-pkg': {
             'name': 'no-fix-pkg',
-            'via': [{'source': 5, 'title': 'GHSA-zzzz-zzzz-zzzz'}],
+            'via': [{'source': 5, 'title': 'no-fix-pkg leaks memory',
+                     'url': 'https://github.com/advisories/GHSA-zzzz-zzzz-zzzz'}],
             'fixAvailable': False,
         },
         # Real shape from the local pre-check (parse-server): `via` is a list of bare
@@ -506,6 +520,109 @@ def check_failure_classes(art):
     return {'violations': v, 'ok': not v}
 
 
+def check_title_is_not_identity(art):
+    """An advisory title is prose, and prose cites other advisories (R37f-P0).
+
+    GHSA-8gc5-j5rx-235r is titled "... (incomplete fix for CVE-2026-26278)" with its own
+    `cve` field null. Harvesting the title made npm audit appear to still report
+    CVE-2026-26278 at fast-xml-parser@5.3.6 after it had been cleared - 2 of 39 attempts
+    in the R37e pre-check, and the two scanners then disagreed for no other reason.
+
+    The citation is real information and is kept, in a field that cannot be mistaken for
+    a finding.
+    """
+    v = []
+    ids = RE.ids_from_npm_audit(art['npm'])
+    cited = RE.textual_references_from_npm_audit(art['npm'])
+    if 'CVE-2026-9999' in ids:
+        v.append('a CVE cited in a title was counted as an advisory npm audit reported')
+    if 'CVE-2026-9999' not in cited:
+        v.append('the title citation was dropped instead of recorded as a reference')
+    # The advisory doing the citing must still be identified, from its own url.
+    if 'GHSA-incomplete-fix' not in ids:
+        v.append('dropping titles also dropped the advisory that carries them')
+    if set(ids) & set(cited):
+        v.append('an identifier is reported as both a claim and a mere citation')
+    return {'violations': v, 'ok': not v}
+
+
+def check_audit_fix_carries_a_lockfile(art):
+    """`npm audit fix` remediates a TREE; a version number is not that tree (R37f-P0).
+
+    Two failures were live here. A fix that rewrote nothing still yielded the installed
+    version, so a failure was scored as a recommendation - and the criterion cannot be
+    the exit code, because `npm audit fix` exits 1 whenever vulnerabilities remain,
+    including after a successful partial fix. And returning only the top-level version
+    discarded every transitive change npm made, so the arm was scored on a tree npm
+    never proposed.
+    """
+    v = []
+    with tempfile.TemporaryDirectory() as tmp:
+        work = Path(tmp)
+
+        def stub(changed, exit_code):
+            state = {'n': 0}
+
+            def fake_run(cmd, cwd, timeout=300):
+                if cmd[:3] == ['npm', 'audit', 'fix']:
+                    state['n'] += 1
+                    if changed:
+                        (work / 'package-lock.json').write_text(
+                            json.dumps({'packages': {
+                                'node_modules/left-pad': {'version': '1.3.0'},
+                                'node_modules/tiny-dep': {'version': '2.0.1'}}}),
+                            encoding='utf-8')
+                    return {'argv': cmd, 'exit_code': exit_code, 'stdout': '',
+                            'stderr': '', 'seconds': 0.0}
+                if cmd[:2] == ['npm', 'ls']:
+                    ver = '1.3.0' if changed else '1.0.0'
+                    return {'argv': cmd, 'exit_code': 0, 'seconds': 0.0, 'stderr': '',
+                            'stdout': json.dumps(
+                                {'dependencies': {'left-pad': {'version': ver}}})}
+                return {'argv': cmd, 'exit_code': 0, 'stdout': '', 'stderr': '',
+                        'seconds': 0.0}
+            return fake_run
+
+        def baseline():
+            RE.write_manifest(work, 'left-pad', '1.0.0')
+            (work / 'package-lock.json').write_text(
+                json.dumps({'packages': {
+                    'node_modules/left-pad': {'version': '1.0.0'}}}), encoding='utf-8')
+
+        # 1. audit fix rewrote nothing, and exited 1. That is no action.
+        baseline()
+        real, RE.run = RE.run, stub(changed=False, exit_code=1)
+        try:
+            got = RE.resolve_audit_fix(work, 'left-pad', None)
+        finally:
+            RE.run = real
+        if got['lockfile_changed']:
+            v.append('an unchanged lockfile was reported as a remediation')
+        if got['lockfile'] is not None:
+            v.append('a lockfile was carried although the fix rewrote nothing')
+
+        # 2. audit fix rewrote the tree, and exited 1 because something remains. That is
+        #    a real partial remediation and must be carried as the lockfile.
+        baseline()
+        real, RE.run = RE.run, stub(changed=True, exit_code=1)
+        try:
+            got = RE.resolve_audit_fix(work, 'left-pad', None)
+        finally:
+            RE.run = real
+        if not got['lockfile_changed']:
+            v.append('exit code 1 was read as failure although the tree was rewritten')
+        if not got['lockfile'] or 'tiny-dep' not in (got['lockfile'] or ''):
+            v.append('the transitive change npm made was not carried')
+        if got['top_level_version'] != '1.3.0':
+            v.append(f"top-level version reported as {got['top_level_version']}")
+
+    # The recommendation must expose that lockfile, or process() cannot install it.
+    rec = RE.npm_audit_recommendation(scans(npm=art['npm']), 'left-pad')
+    if rec.get('version') != '2.0.0':
+        v.append('the object form stopped resolving')
+    return {'violations': v, 'ok': not v}
+
+
 def check_sibling_package_not_answered_for(art):
     """One advisory can cover several packages; only this package's range applies.
 
@@ -596,6 +713,8 @@ CHECKS = {
     'failure_classes': check_failure_classes,
     'sibling_package_not_answered_for': check_sibling_package_not_answered_for,
     'related_is_not_identity': check_related_is_not_identity,
+    'title_is_not_identity': check_title_is_not_identity,
+    'audit_fix_carries_a_lockfile': check_audit_fix_carries_a_lockfile,
     'unevaluated_pin_is_not_a_pass': check_unevaluated_pin_is_not_a_pass,
 }
 
@@ -742,7 +861,42 @@ def _c_related_folded_into_identity():
     return lambda: setattr(RE, 'ids_from_osv', real)
 
 
+def _c_titles_scanned_for_ids():
+    """R37f-P0 as it stood: harvest identifiers out of advisory prose."""
+    real = RE.ids_from_npm_audit
+
+    def patched(parsed):
+        out = set(real(parsed))
+        for via in RE._via_dicts(parsed):
+            for field in ('source', 'url', 'title', 'name'):
+                value = via.get(field)
+                if isinstance(value, str):
+                    out.update(RE._ids_in(value))
+        return sorted(out)
+
+    RE.ids_from_npm_audit = patched
+    return lambda: setattr(RE, 'ids_from_npm_audit', real)
+
+
+def _c_audit_fix_returns_a_version():
+    """R37f-P0 as it stood: read a version out of the lockfile, changed or not."""
+    real = RE.resolve_audit_fix
+
+    def patched(work, package, store):
+        out = real(work, package, store)
+        return {**out, 'lockfile_changed': True, 'lockfile': None,
+                'top_level_version': (out['top_level_version']
+                                      or RE.version_from_lockfile(work, package))}
+
+    RE.resolve_audit_fix = patched
+    return lambda: setattr(RE, 'resolve_audit_fix', real)
+
+
 CODE_FAULTS = [
+    ('advisory ids harvested out of prose titles',
+     _c_titles_scanned_for_ids, 'title_is_not_identity'),
+    ('audit fix reduced to a version number, unchanged tree treated as a fix',
+     _c_audit_fix_returns_a_version, 'audit_fix_carries_a_lockfile'),
     ('a pin reported as exact on an install that never ran',
      _c_pin_compared_unconditionally, 'unevaluated_pin_is_not_a_pass'),
     ('an uninstallable published manifest filed under "other"',

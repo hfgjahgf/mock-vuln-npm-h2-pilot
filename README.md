@@ -8,7 +8,7 @@ used. v1's own content stays in its history; this kit replaces the working tree,
 v1 ran a different data model and a different four arms (`nvd_direct` / `grype_native` /
 `canonical_enrichment` / `canonical_direct`, last touched 2026-07-03).
 
-Protocol: `schemas/H2_REAL_PIPELINE_PROTOCOL.md` (`h2-real-protocol-4`), frozen before
+Protocol: `schemas/H2_REAL_PIPELINE_PROTOCOL.md` (`h2-real-protocol-5`), frozen before
 any run. Inputs: `H2_REAL_ENVIRONMENTS.json` (1,556 environments) and
 `H2_UNIFIED_RECOMMENDATIONS.json` (the Unified arm's only source).
 
@@ -119,8 +119,8 @@ Then download the artifacts and run the offline ingest back in the thesis repo.
 ## Testing the parsers before trusting them
 
 ```bash
-python tests/Test_pipeline_parsers.py             # 12 checks
-python tests/Test_pipeline_parsers.py --self-test  # 5 mutations
+python tests/Test_pipeline_parsers.py             # 21 checks
+python tests/Test_pipeline_parsers.py --self-test  # 12 mutations
 ```
 
 These run offline against fixtures. **If the real scanner output differs from the

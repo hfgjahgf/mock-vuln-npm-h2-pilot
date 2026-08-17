@@ -26,9 +26,10 @@ R37c corrected six things a review reproduced with counterexamples:
   - a scanner that failed to run was indistinguishable from a scanner that found nothing
   - the pinned version was not pinned in package.json, so save-prefix could widen it
 
-Protocol: H2_REAL_PIPELINE_PROTOCOL.md (h2-real-protocol-4).
+Protocol: H2_REAL_PIPELINE_PROTOCOL.md (h2-real-protocol-5).
 """
 import argparse
+import datetime
 import gzip
 import hashlib
 import json
@@ -63,29 +64,47 @@ SEMVER_HELPER = HERE / 'semver_check.js'
 SEMVER_RANGE_TYPES = ('SEMVER', 'ECOSYSTEM')
 
 
+def utc_now():
+    return datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
 def run(cmd, cwd, timeout=300):
     """Run a command, never raise. The tool failing IS data.
 
-    Decoding is pinned to UTF-8 with replacement rather than left to the platform
-    locale: advisory titles and package descriptions carry non-ASCII text, and a
-    locale-decoded pipe raises UnicodeDecodeError from inside subprocess - which is
-    neither a TimeoutExpired nor an OSError, so it would have escaped this handler and
-    cost the whole environment for an encoding reason. Found in the local pre-check on
-    a GBK console (2026-08-17).
+    Output is captured as bytes and decoded here rather than by subprocess: decoding is
+    pinned to UTF-8 with replacement instead of the platform locale (advisory titles
+    carry non-ASCII, and a locale-decoded pipe raised UnicodeDecodeError from INSIDE
+    subprocess, which is neither TimeoutExpired nor OSError and would have cost the whole
+    environment for an encoding reason - found on a GBK console, 2026-08-17), and holding
+    the bytes lets the digest attest what the process wrote rather than what replacement
+    turned it into (R37f-P2).
+
+    `started_utc` is the observation time for whichever live database this command asked
+    - the registry audit endpoint or osv.dev. Nothing else records when a scan happened.
     """
     started = time.time()
+    at = utc_now()
     try:
-        p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True,
-                           encoding='utf-8', errors='replace', timeout=timeout)
-        return {'argv': cmd, 'exit_code': p.returncode, 'stdout': p.stdout,
-                'stderr': (p.stderr or '')[-4000:],
-                'seconds': round(time.time() - started, 2)}
+        # Captured as BYTES and decoded here, so the digest below is over what the
+        # process actually wrote (R37f-P2). `errors='replace'` rewrites invalid UTF-8,
+        # and hashing the replaced text would attest a string the scanner never emitted.
+        p = subprocess.run(cmd, cwd=cwd, capture_output=True, timeout=timeout)
+        text = p.stdout.decode('utf-8', errors='replace')
+        return {'argv': cmd, 'exit_code': p.returncode, 'stdout': text,
+                'stderr': p.stderr.decode('utf-8', errors='replace')[-4000:],
+                'stdout_bytes_sha256': hashlib.sha256(p.stdout).hexdigest(),
+                'stdout_bytes': len(p.stdout),
+                # True means the stored text is a lossy rendering and only
+                # stdout_bytes_sha256 attests the original.
+                'stdout_decoding_lossy': text.encode('utf-8') != p.stdout,
+                'started_utc': at, 'seconds': round(time.time() - started, 2)}
     except subprocess.TimeoutExpired:
         return {'argv': cmd, 'exit_code': None, 'stdout': '', 'stderr': 'TIMEOUT',
-                'timed_out': True, 'seconds': round(time.time() - started, 2)}
-    except (OSError, UnicodeError) as exc:
+                'timed_out': True, 'started_utc': at,
+                'seconds': round(time.time() - started, 2)}
+    except OSError as exc:
         return {'argv': cmd, 'exit_code': None, 'stdout': '',
-                'stderr': f'{type(exc).__name__}: {exc}',
+                'stderr': f'{type(exc).__name__}: {exc}', 'started_utc': at,
                 'seconds': round(time.time() - started, 2)}
 
 
@@ -105,6 +124,12 @@ class RawStore:
 
     Recording a hash and discarding the bytes leaves a checksum with nothing to check.
     Scanner stdout, the lockfile, and the `npm ls` tree all go in here.
+
+    Two digests, because they answer different questions (R37f-P2). `sha256` is over the
+    stored text and is what makes this file self-verifying. `stdout_bytes_sha256` is over
+    the bytes the process wrote. They are equal whenever decoding was lossless, which is
+    the normal case; when `decoding_lossy` is true the stored text is a rendering and
+    only the byte digest attests the original.
     """
 
     def __init__(self, path):
@@ -126,6 +151,10 @@ class RawStore:
         return self.keep(kind, result.get('stdout'),
                          {'argv': result.get('argv'),
                           'exit_code': result.get('exit_code'),
+                          'started_utc': result.get('started_utc'),
+                          'stdout_bytes_sha256': result.get('stdout_bytes_sha256'),
+                          'stdout_bytes': result.get('stdout_bytes'),
+                          'decoding_lossy': result.get('stdout_decoding_lossy'),
                           'stderr': result.get('stderr')})
 
     def close(self):
@@ -227,6 +256,11 @@ def scan_record(result, store, kind):
     elif not valid_payload(kind, parsed):
         status = 'output_unparseable'
     return {'raw_sha256': store.keep_result(kind, result),
+            # Over the process's own bytes, not the replacement-decoded text (R37f-P2).
+            'stdout_bytes_sha256': result.get('stdout_bytes_sha256'),
+            'stdout_decoding_lossy': result.get('stdout_decoding_lossy'),
+            # When this live database was asked. Nothing else records it.
+            'observed_utc': result.get('started_utc'),
             'exit_code': code, 'status': status,
             'parsed': parsed if status == 'ok' else None,
             'stderr': result.get('stderr') if status != 'ok' else None}
@@ -248,31 +282,63 @@ def valid_payload(kind, parsed):
 
 # ------------------------------------------------------------------ parsing
 
-def ids_from_npm_audit(parsed):
-    """Advisory identifiers npm audit named - this scanner alone (protocol §5.1).
-
-    `via` entries come in two shapes, both seen in the local pre-check: a dict holding
+def _via_dicts(parsed):
+    """`via` entries come in two shapes, both seen in the local pre-check: a dict holding
     the advisory itself, and a bare STRING naming another package this one is vulnerable
     *through*. A string carries no advisory id and none is invented for it - the ids for
     that path live on the named package's own entry, which this loop also visits.
     """
-    seen = set()
     for entry in ((parsed or {}).get('vulnerabilities') or {}).values():
         for via in entry.get('via', []) or []:
-            if isinstance(via, str):
-                # A transitive link, not an advisory. Nothing to extract here.
-                continue
-            if not isinstance(via, dict):
-                continue
-            for field in ('source', 'url', 'title', 'name'):
-                value = via.get(field)
-                if isinstance(value, str):
-                    seen.update(_ids_in(value))
-            for cve in via.get('cve', []) or []:
-                seen.add(cve)
-            for alias in via.get('aliases', []) or []:
-                seen.add(alias)
+            if isinstance(via, dict):
+                yield via
+
+
+def ids_from_npm_audit(parsed):
+    """Advisory identifiers npm audit CLAIMS - this scanner alone (protocol §5.1).
+
+    The advisory's own `url` and its structured `cve`/`aliases` lists, and nothing else.
+
+    `title` is deliberately NOT read (R37f-P0). An advisory title is prose, and prose
+    cites other advisories: GHSA-8gc5-j5rx-235r is titled "... (incomplete fix for
+    CVE-2026-26278)" while its own `cve` field is null, and a `sharp` advisory is titled
+    "inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, ..." for CVEs
+    belonging to a native C library that is not an npm package at all. Scanning titles
+    made npm audit appear to still report the target advisory at fast-xml-parser@5.3.6
+    after it had in fact been cleared - the two scanners then disagreed for no reason but
+    this. A citation is not a claim of identity; it is recorded separately, by
+    textual_references_from_npm_audit, and never reaches the method gate.
+
+    `source` and `name` are not read either: measured over both pre-check runs they
+    contributed no identifier that url/cve/aliases did not already carry (347 `via`
+    dicts), and `name` is a package name, which must never become an advisory id.
+    """
+    seen = set()
+    for via in _via_dicts(parsed):
+        url = via.get('url')
+        if isinstance(url, str):
+            seen.update(_ids_in(url))
+        for cve in via.get('cve', []) or []:
+            seen.add(cve)
+        for alias in via.get('aliases', []) or []:
+            seen.add(alias)
     return sorted(seen)
+
+
+def textual_references_from_npm_audit(parsed):
+    """Identifiers a title MENTIONS that the advisory does not claim to be.
+
+    Display and provenance only - protocol §5.1's method gate reads
+    ids_from_npm_audit. Kept because "the title cites the advisory this one incompletely
+    fixes" is real information about the ecosystem; discarded from identity because a
+    citation is not a claim.
+    """
+    seen = set()
+    for via in _via_dicts(parsed):
+        title = via.get('title')
+        if isinstance(title, str):
+            seen.update(_ids_in(title))
+    return sorted(seen - set(ids_from_npm_audit(parsed)))
 
 
 def ids_from_osv(parsed):
@@ -313,40 +379,93 @@ def npm_audit_recommendation(scans, package, work=None, store=None):
                 'is_semver_major': bool(fix.get('isSemVerMajor')),
                 'source': 'npm audit fixAvailable object'}
     if fix is True:
-        resolved = resolve_audit_fix(work, package, store) if work else None
-        return {'version': resolved,
+        applied = resolve_audit_fix(work, package, store) if work else None
+        if applied is None:
+            return {'version': None, 'source': 'npm audit fixAvailable true',
+                    'resolved_via_audit_fix': True, 'unresolved': True}
+        if not applied['lockfile_changed']:
+            # audit fix ran and rewrote nothing. That is no action, not a fix whose
+            # version happens to equal the installed one (R37f-P0).
+            return {'version': None,
+                    'source': 'npm audit fixAvailable true, audit fix changed nothing',
+                    'resolved_via_audit_fix': True, 'tool_says_no_fix': True,
+                    'audit_fix_changed_nothing': True,
+                    'audit_fix_exit_code': applied['audit_fix_exit_code']}
+        # The remediation is the whole lockfile npm wrote; the version is reporting.
+        return {'version': applied['top_level_version'],
+                'lockfile': applied['lockfile'],
+                'manifest': applied['manifest'],
+                'lockfile_sha256': applied['lockfile_sha256'],
                 'source': 'npm audit fixAvailable true, resolved via audit fix',
                 'resolved_via_audit_fix': True,
-                'unresolved': resolved is None}
+                'audit_fix_exit_code': applied['audit_fix_exit_code'],
+                'unresolved': False}
     if fix is False:
         return {'version': None, 'source': 'npm audit fixAvailable false',
                 'tool_says_no_fix': True}
     return {'version': None, 'source': 'npm audit', 'no_entry_for_package': True}
 
 
+def read_lockfile(work):
+    return _read(work / 'package-lock.json')
+
+
+def _read(path):
+    try:
+        return path.read_text(encoding='utf-8')
+    except OSError:
+        return None
+
+
 def resolve_audit_fix(work, package, store):
-    """`fixAvailable: true` names no version; perform the fix and read what it chose.
+    """`fixAvailable: true` names no version - the remediation IS the lockfile.
+
+    npm defines `npm audit fix` as applying remediation to the whole dependency tree,
+    and with --package-lock-only the thing it rewrites is package-lock.json. Returning
+    only the top-level version and rebuilding a tree from it (R37f-P0) discards every
+    transitive change npm made, so the arm was scored on a tree npm never proposed.
+    The fixed lockfile is captured here and installed verbatim by attempt().
+
+    The criterion is whether the LOCKFILE CHANGED, not the exit code. `npm audit fix`
+    exits 1 whenever vulnerabilities remain afterwards - which includes a successful
+    PARTIAL fix - so exit 1 does not mean failure. It also leaves the lockfile untouched
+    when it can fix nothing, and reading a version out of that unchanged file returned
+    the installed version as though it were a recommendation (reproduced: audit fix
+    exit 1, lockfile untouched, resolve_audit_fix returned the installed 1.0.0).
 
     The fix is applied with --package-lock-only, so there is NO node_modules afterwards
     - and a plain `npm ls` then reports `missing` and exits 1, which is how this branch
     silently produced nothing at all (R37d-P0, reproduced on the pinned Node 22.20.0 /
-    npm 10.9.3). `npm ls --package-lock-only` reads the lockfile instead, which is the
-    tree the fix actually wrote.
+    npm 10.9.3). `npm ls --package-lock-only` reads the lockfile instead.
     """
+    before = read_lockfile(work)
     fixed = run(['npm', 'audit', 'fix', '--package-lock-only', *NO_SCRIPTS,
                  '--fund=false'], work, timeout=600)
     if store is not None:
         store.keep_result('npm_audit_fix', fixed)
+    after = read_lockfile(work)
+    # audit fix can widen the manifest range as well as rewrite the lockfile, and
+    # `npm ci` refuses to run when the two disagree. Both files are the remediation.
+    manifest = _read(work / 'package.json')
     listed = run(['npm', 'ls', '--package-lock-only', '--all', '--json'],
                  work, timeout=300)
     if store is not None:
         store.keep_result('npm_ls_after_audit_fix', listed)
     tree = as_json(listed)
-    version = ((tree or {}).get('dependencies') or {}).get(package, {}).get('version')
-    if version:
-        return version
-    # Fall back to the lockfile the fix just rewrote - same source, read directly.
-    return version_from_lockfile(work, package)
+    version = (((tree or {}).get('dependencies') or {}).get(package, {}).get('version')
+               or version_from_lockfile(work, package))
+    changed = after is not None and after != before
+    out = {'lockfile': after if changed else None,
+           'manifest': manifest if changed else None,
+           'lockfile_sha256': sha256(after) if changed else None,
+           'top_level_version': version,
+           'lockfile_changed': changed,
+           'audit_fix_exit_code': fixed.get('exit_code'),
+           'audit_fix_lockfile_sha256_before': sha256(before) if before else None}
+    if store is not None and changed:
+        store.keep('package-lock.json', after, {'phase': 'npm_audit_fix_result'})
+        store.keep('package.json', manifest, {'phase': 'npm_audit_fix_result'})
+    return out
 
 
 def version_from_lockfile(work, package):
@@ -564,6 +683,9 @@ def detection(env, scans):
         'npm_audit': set(ids_from_npm_audit(scans['npm_audit'].get('parsed'))),
         'osv_scanner': set(ids_from_osv(scans['osv_scanner'].get('parsed'))),
     }
+    # Cited by an advisory title but not claimed by any advisory. Recorded, never
+    # matched against (R37f-P0).
+    cited = set(textual_references_from_npm_audit(scans['npm_audit'].get('parsed')))
     for q in env['queries']:
         targets = set(q['target_advisory_identifiers'])
         cell = {'targets': sorted(targets)}
@@ -580,9 +702,17 @@ def detection(env, scans):
             'matched': sorted({m for c in usable for m in c['matched']}),
             'usable_scanners': len(usable),
             'note': 'display only - not a criterion (protocol 5.1)'}
+        # A target that ONLY appears inside some advisory's prose. This is what a
+        # follow-up "incomplete fix for X" advisory looks like: X itself is cleared and
+        # a DIFFERENT advisory is present. Reported so the ingest can say that, rather
+        # than being silently dropped.
+        cell['textual_reference_only'] = sorted(targets & cited)
         out[q['entity_id']] = cell
     return {'per_query': out, 'scanner_status': status,
-            'scanner_identifiers': {k: sorted(v) for k, v in found.items()}}
+            'scanner_identifiers': {k: sorted(v) for k, v in found.items()},
+            'npm_audit_textual_references': sorted(cited),
+            'textual_references_note':
+                'cited in an advisory TITLE, not claimed by any advisory; never matched'}
 
 
 # ------------------------------------------------------------------ driver
@@ -637,11 +767,21 @@ def process(env, unified_versions, work, store):
                                      'reason': rec['unusable'],
                                      'excluded_from_operational_denominator': True}
             continue
+        # npm's `fixAvailable: true` remediation is a whole lockfile, not a version
+        # (R37f-P0). Everything else names a version for the top-level package.
+        if rec.get('lockfile'):
+            record['phase2'][arm] = {'outcome': 'attempted', 'attempts': [
+                attempt(work, store, env, package, rec.get('version'),
+                        lockfile=rec['lockfile'], manifest=rec.get('manifest'),
+                        lockfile_sha256=rec.get('lockfile_sha256'))]}
+            continue
         versions = rec.get('versions') or ([rec['version']] if rec.get('version')
                                            else [])
         if not versions:
             record['phase2'][arm] = {'outcome': 'no_action_generated',
                                      'tool_says_no_fix': rec.get('tool_says_no_fix'),
+                                     'audit_fix_changed_nothing':
+                                         rec.get('audit_fix_changed_nothing'),
                                      'unresolved': rec.get('unresolved')}
             continue
         record['phase2'][arm] = {'outcome': 'attempted', 'attempts': [
@@ -649,27 +789,56 @@ def process(env, unified_versions, work, store):
     return record
 
 
-def attempt(work, store, env, package, fix):
+def restore_fixed_tree(work, lockfile, manifest):
+    """Put back verbatim what `npm audit fix` wrote - both files, nothing re-resolved.
+
+    npm defines audit fix as remediation over the whole dependency tree, so the tree it
+    wrote IS the recommendation. Re-running `npm install` here would let npm resolve it
+    again and could substitute a different tree; `npm ci` in the install gate installs
+    exactly this lockfile, and fails loudly if the two files disagree (R37f-P0).
+    """
+    clean(work)
+    if manifest is not None:
+        (work / 'package.json').write_text(manifest, encoding='utf-8')
+    (work / 'package-lock.json').write_text(lockfile, encoding='utf-8')
+
+
+def attempt(work, store, env, package, fix, lockfile=None, manifest=None,
+            lockfile_sha256=None):
     """Install first. Re-scan only if the install gate passes (protocol §5.2)."""
-    built = lockfile_for(work, package, fix)
-    if built['exit_code'] != 0 or built['pinned_exactly'] is not True:
-        return {'recommended_version': fix, 'outcome': 'remediation_not_installable',
-                'install_gate': {'lockfile_constructable': built['exit_code'] == 0,
-                                 'pinned_exactly': built['pinned_exactly'],
-                                 'failure_reason': classify_failure(built)},
-                'stderr': built['stderr']}
+    kind = 'lockfile' if lockfile is not None else 'version'
+    if lockfile is not None:
+        restore_fixed_tree(work, lockfile, manifest)
+    else:
+        built = lockfile_for(work, package, fix)
+        if built['exit_code'] != 0 or built['pinned_exactly'] is not True:
+            return {'recommended_version': fix, 'remediation_kind': kind,
+                    'outcome': 'remediation_not_installable',
+                    'install_gate': {'lockfile_constructable': built['exit_code'] == 0,
+                                     'pinned_exactly': built['pinned_exactly'],
+                                     'failure_reason': classify_failure(built)},
+                    'stderr': built['stderr']}
     gate = install_gate(work, package, fix, store)
+    if lockfile is not None:
+        # `target_version_present` still means what it says: `npm ci` installs this
+        # lockfile, so the top-level package must resolve to the version npm's own fix
+        # put there. It is NOT overridden - an unevaluated step may not report a pass.
+        gate['remediation_lockfile_sha256'] = lockfile_sha256
+        gate['remediation_lockfile_sha256_on_disk'] = sha256(read_lockfile(work))
     if not gate_passed(gate):
         # No re-scan, and therefore no primary-endpoint result. A fix that cannot be
         # installed must never be recorded as remediated.
-        return {'recommended_version': fix, 'outcome': 'remediation_not_installable',
-                'install_gate': gate}
+        return {'recommended_version': fix,
+                'remediation_kind': 'lockfile' if lockfile is not None else 'version',
+                'outcome': 'remediation_not_installable', 'install_gate': gate}
     rescan = scan_both(work, store, 'rescan')
     # NOT "remediated": the re-scan has run but nothing here has read it, and a scanner
     # may have failed outright. Whether the target actually cleared is the ingest's
     # judgement, per scanner (R37d-P1). The runner reports what it did, not what it
     # achieved.
-    return {'recommended_version': fix, 'outcome': 'installed_and_rescanned',
+    return {'recommended_version': fix,
+            'remediation_kind': 'lockfile' if lockfile is not None else 'version',
+            'outcome': 'installed_and_rescanned',
             'install_gate': gate, 'scans': rescan,
             'detection_after': detection(env, rescan)}
 

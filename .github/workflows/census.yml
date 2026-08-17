@@ -128,11 +128,47 @@ jobs:
               'runner_image_version': os.environ.get('ImageVersion', 'unknown'),
               'runner_arch': os.environ.get('RUNNER_ARCH', 'unknown'),
               'pinned': json.load(open('pinned_tools.json')),
-              'run_started_utc': datetime.datetime.now(
+              # Which run, of which commit, with which inputs (R37f-P2). Without these
+              # a shard file cannot be tied back to the run that produced it, and two
+              # runs of different code look identical.
+              'github_run_id': os.environ.get('GH_RUN_ID', 'unknown'),
+              'github_run_attempt': os.environ.get('GH_RUN_ATTEMPT', 'unknown'),
+              'github_run_number': os.environ.get('GH_RUN_NUMBER', 'unknown'),
+              'github_sha': os.environ.get('GH_SHA', 'unknown'),
+              'github_ref': os.environ.get('GH_REF', 'unknown'),
+              'github_repository': os.environ.get('GH_REPO', 'unknown'),
+              'workflow_inputs': {
+                  'shard_count': os.environ.get('IN_SHARD_COUNT', 'unknown'),
+                  'shards': os.environ.get('IN_SHARDS', 'unknown'),
+                  'limit': os.environ.get('IN_LIMIT', 'unknown'),
+              },
+              'shard': os.environ.get('SHARD_INDEX', 'unknown'),
+              # Job start. The observation time of each individual scan is recorded per
+              # command as `observed_utc`; osv-scanner v2 does not report a database
+              # timestamp, so the scan time is the only record of WHEN the live database
+              # was asked.
+              'job_started_utc': datetime.datetime.now(
                   datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'osv_database_version_reported_by_tool': None,
+              'artifact_retention_days': 90,
+              'retention_note': (
+                  'Artifacts expire after 90 days. This is a retention window, not '
+                  'permanent publication - anything the thesis relies on must be '
+                  'copied out and archived before it lapses.'),
           }, open('/dev/stdout', 'w'), indent=1, sort_keys=True)
           PY
           cat out/tool_versions.json
+        env:
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_RUN_NUMBER: ${{ github.run_number }}
+          GH_SHA: ${{ github.sha }}
+          GH_REF: ${{ github.ref }}
+          GH_REPO: ${{ github.repository }}
+          IN_SHARD_COUNT: ${{ github.event.inputs.shard_count }}
+          IN_SHARDS: ${{ github.event.inputs.shards }}
+          IN_LIMIT: ${{ github.event.inputs.limit }}
+          SHARD_INDEX: ${{ matrix.shard }}
 
       - name: Run shard
         run: |
@@ -144,10 +180,12 @@ jobs:
             --limit ${{ github.event.inputs.limit }} \
             --out out/shard-${{ matrix.shard }}.jsonl \
             --raw-out out/raw-${{ matrix.shard }}.jsonl.gz
-        # A shard that dies mid-way must still hand back what it has, so the ingest can
-        # tell "environment failed" from "environment never attempted" (protocol §9,
-        # no_silent_exclusion).
-        continue-on-error: true
+        # NOT continue-on-error (R37f-P1): that made a shard which died mid-way report a
+        # GREEN job, so a truncated census would have looked like a complete one. The
+        # upload below is `if: always()`, so a crashed shard still hands back what it
+        # has - the ingest can still tell "environment failed" from "environment never
+        # attempted" (protocol §9, no_silent_exclusion) - while the job fails honestly.
+        # `fail-fast: false` keeps one bad shard from cancelling the others.
 
       - name: Upload shard
         if: always()
