@@ -167,8 +167,14 @@ def lockfile_for(work, package, version):
     result = run(['npm', 'install', f'{package}@{version}',
                   '--package-lock-only', *NO_SCRIPTS, *PIN_FLAGS], work)
     result['declared_range'] = declared_range(work, package)
-    # An exact pin is part of the fixture being what it claims to be.
-    result['pinned_exactly'] = result['declared_range'] == version
+    # An exact pin is part of the fixture being what it claims to be - but only npm can
+    # demonstrate it. write_manifest() already wrote the exact version, so when the
+    # install FAILS the manifest still holds our own input and the comparison compares a
+    # string to itself: it answered True for both openlearnx environments in the R37e
+    # pre-check, whose install never got off the ground. An unevaluated check reports
+    # None, never a pass (protocol paragraph 5.2 records four steps, not three-and-a-guess).
+    result['pinned_exactly'] = (result['declared_range'] == version
+                                if result['exit_code'] == 0 else None)
     return result
 
 
@@ -536,6 +542,14 @@ def classify_failure(result):
         return 'version_not_found'
     if 'econnreset' in blob or 'etimedout' in blob or 'enotfound' in blob:
         return 'registry_error'
+    # The PUBLISHED manifest names a dependency npm cannot fetch at all - `link:`,
+    # `file:`, `workspace:` survive publication and are only resolvable inside the
+    # author's own tree. Both openlearnx environments in the R37e pre-check failed this
+    # way and landed in `other`, which would have merged "this package cannot be
+    # installed by anyone" with "we do not know what happened" (protocol paragraph 9,
+    # no_silent_exclusion). It is a property of the package, not of our environment.
+    if 'eunsupportedprotocol' in blob or 'unsupported url type' in blob:
+        return 'unsupported_dependency_protocol'
     if 'could not resolve' in blob:
         return 'transitive_constraint'
     return 'other'
@@ -582,7 +596,7 @@ def process(env, unified_versions, work, store):
               'phase1': None, 'phase2': {}, 'errors': []}
 
     built = lockfile_for(work, package, installed)
-    if built['exit_code'] != 0 or not built['pinned_exactly']:
+    if built['exit_code'] != 0 or built['pinned_exactly'] is not True:
         record['phase1'] = {
             'lockfile_constructable': built['exit_code'] == 0,
             'pinned_exactly': built['pinned_exactly'],
@@ -638,7 +652,7 @@ def process(env, unified_versions, work, store):
 def attempt(work, store, env, package, fix):
     """Install first. Re-scan only if the install gate passes (protocol §5.2)."""
     built = lockfile_for(work, package, fix)
-    if built['exit_code'] != 0 or not built['pinned_exactly']:
+    if built['exit_code'] != 0 or built['pinned_exactly'] is not True:
         return {'recommended_version': fix, 'outcome': 'remediation_not_installable',
                 'install_gate': {'lockfile_constructable': built['exit_code'] == 0,
                                  'pinned_exactly': built['pinned_exactly'],

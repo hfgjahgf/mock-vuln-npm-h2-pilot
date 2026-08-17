@@ -1,3 +1,8 @@
+# NOTE: `* text eol=lf` below normalises line endings in everything git does not detect
+# as binary, so no compiled or archive file may ever be committed here - it would be
+# rewritten. .gitignore keeps __pycache__ out; anything binary that has to be tracked
+# needs an explicit `-text` rule of its own.
+#
 # The thesis repository pins data/*.json by CONTENT HASH, and the runner is Linux.
 # Without this, a checkout on Windows would hand the consumer CRLF bytes and the hash
 # would not match what was pinned - the file would be "the same file" by name and a

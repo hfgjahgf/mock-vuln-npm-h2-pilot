@@ -21,6 +21,7 @@ fixtures, THE FIXTURES AND THE PARSER CHANGE, never the criteria (protocol §5.3
 """
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
@@ -65,10 +66,16 @@ NPM_AUDIT = {
 }
 
 OSV_SCANNER = {
+    # v2.2.4 emits this alongside `results`; it carries no findings and is ignored.
+    # Confirmed against the real binary in the R37e pre-check, 29/29 outputs.
+    'experimental_config': {},
     'results': [{
         'source': {'path': '/tmp/package-lock.json', 'type': 'lockfile'},
         'packages': [{
             'package': {'name': 'left-pad', 'version': '1.0.1', 'ecosystem': 'npm'},
+            # v2 groups the findings it considers one issue; the fix is read from
+            # `affected` ranges, never from here.
+            'groups': [{'ids': ['GHSA-aaaa-bbbb-cccc'], 'max_severity': '7.5'}],
             'vulnerabilities': [
                 {
                     'id': 'GHSA-aaaa-bbbb-cccc',
@@ -115,6 +122,32 @@ OSV_SCANNER = {
                     }],
                 },
                 {
+                    # One advisory covering SIBLING packages - 20 such entries in the
+                    # R37e pre-check (@dicebear/core with @dicebear/initials,
+                    # react-router-dom with react-router, three @opentelemetry/*). The
+                    # sibling's range names a different, higher fix; answering with it
+                    # would install a version of a package nobody asked about.
+                    'id': 'GHSA-sibling', 'aliases': ['CVE-2026-0012'],
+                    # `related` carries CGA- ids in the real output (91 of them). Under
+                    # the frozen identity policy `related` is NOT an identity claim
+                    # (R26-F4), so nothing here may reach the method gate.
+                    'related': ['CGA-rrrr-ssss-tttt'],
+                    'affected': [
+                        {'package': {'name': 'left-pad', 'ecosystem': 'npm',
+                                     'purl': 'pkg:npm/left-pad'},
+                         'database_specific': {'source': 'https://example/osv'},
+                         'ranges': [{'type': 'SEMVER',
+                                     'events': [{'introduced': '1.0.0'},
+                                                {'fixed': '1.0.2'}]}]},
+                        {'package': {'name': 'left-pad-extra', 'ecosystem': 'npm',
+                                     'purl': 'pkg:npm/left-pad-extra'},
+                         'ranges': [{'type': 'SEMVER',
+                                     'events': [{'introduced': '1.0.0'},
+                                                {'fixed': '7.7.7'}]}]},
+                    ],
+                    'severity': [{'type': 'CVSS_V4', 'score': 'CVSS:4.0/AV:N'}],
+                },
+                {
                     # GIT ranges hold commit hashes - not comparable to an npm version.
                     'id': 'GHSA-git-range', 'aliases': ['CVE-2026-0010'],
                     'affected': [{
@@ -146,6 +179,10 @@ class FakeSemver:
         ('1.5.0', '>=1.0.0 <1.5.0'): False,     # what the old code asked instead
         ('1.0.2', '>=1.0.0 <1.0.2'): False,     # fixed: no longer affected
         ('2.0.0', '>=1.0.0 <2.0.0'): False,     # limit: outside
+        # The SIBLING package's own range. The parser never asks this, because it
+        # filters by package name first - but it has to be answerable, or removing the
+        # filter would yield no candidate and the mutation could not fail the check.
+        ('1.0.1', '>=1.0.0 <7.7.7'): True,
     }
 
     def satisfies(self, version, expression):
@@ -453,12 +490,90 @@ def check_failure_classes(art):
         'npm ERR! ERESOLVE could not resolve': 'peer_dependency',
         'npm ERR! notarget No matching version found': 'version_not_found',
         'npm ERR! network ECONNRESET': 'registry_error',
+        # Verbatim from the R37e pre-check, openlearnx@2.0.2 on npm 10.9.3. A published
+        # manifest can name `link:`/`file:`/`workspace:` dependencies that only resolve
+        # inside the author's tree; that is a fact about the package, not about us, and
+        # merging it into `other` would hide it among genuinely unknown failures.
+        'npm error code EUNSUPPORTEDPROTOCOL\n'
+        'npm error Unsupported URL Type "link:": link:@/components/ui/card':
+            'unsupported_dependency_protocol',
         'something else entirely': 'other',
     }
     for blob, want in table.items():
         got = RE.classify_failure({'stderr': blob, 'stdout': ''})
         if got != want:
-            v.append(f'{blob!r} classified {got}, expected {want}')
+            v.append(f'{blob[:48]!r} classified {got}, expected {want}')
+    return {'violations': v, 'ok': not v}
+
+
+def check_sibling_package_not_answered_for(art):
+    """One advisory can cover several packages; only this package's range applies.
+
+    Twenty such entries appeared in the R37e pre-check. The sibling's range names a
+    higher fix, so dropping the name filter does not fail loudly - it installs a version
+    derived from a package that is not in this environment at all.
+    """
+    v = []
+    rec = RE.osv_recommendation(scans(osv=art['osv']), 'left-pad', '1.0.1',
+                                ['CVE-2026-0012'], FakeSemver())
+    if rec['version'] != '1.0.2':
+        v.append(f"sibling-covering advisory answered {rec['version']}, expected 1.0.2")
+    for c in rec.get('candidates') or []:
+        if c['version'] == '7.7.7':
+            v.append("the sibling package's own fix entered this package's candidates")
+    return {'violations': v, 'ok': not v}
+
+
+def check_related_is_not_identity(art):
+    """`related` is not an identity claim - the frozen policy says so (R26-F4).
+
+    The real output carries 91 `related` entries, all CGA- ids. If they were folded into
+    the identifiers a scanner is credited with, the method gate would quietly start
+    counting advisories the scanner never claimed to have found.
+    """
+    v = []
+    got = RE.ids_from_osv(art['osv'])
+    for bad in [i for i in got if i.startswith('CGA-')]:
+        v.append(f'`related` id {bad} was counted as an identifier the scanner reported')
+    if 'CVE-2026-0012' not in got:
+        v.append('the advisory carrying `related` lost its own aliases')
+    return {'violations': v, 'ok': not v}
+
+
+def check_unevaluated_pin_is_not_a_pass(art):
+    """A pin npm never got to demonstrate must report None, never True.
+
+    `write_manifest` writes the exact version and `declared_range` reads that same file
+    back, so on a FAILED install the comparison compares our own input to itself. Both
+    openlearnx environments in the R37e pre-check therefore recorded
+    `pinned_exactly: True` for an install that resolved nothing at all - one of the four
+    install-gate steps of protocol §5.2, reported as passed without being evaluated.
+
+    This check EXECUTES `lockfile_for` with npm stubbed out rather than scanning the
+    source, so neither a docstring nor a renamed variable can satisfy it.
+    """
+    v = []
+    cases = [
+        ('install failed', 1, None, None),
+        ('install ok, manifest still exact', 0, None, True),
+        ('install ok, save-prefix widened it', 0, '^1.2.3', False),
+    ]
+    with tempfile.TemporaryDirectory() as tmp:
+        work = Path(tmp)
+        for label, code, rewrite, want in cases:
+            def fake_run(cmd, cwd, timeout=300, _c=code, _w=rewrite):
+                if _w is not None:                 # npm rewriting package.json
+                    RE.write_manifest(work, 'left-pad', _w)
+                return {'argv': cmd, 'exit_code': _c, 'stdout': '',
+                        'stderr': '' if _c == 0 else 'npm error code EBADPLATFORM',
+                        'duration_s': 0.0}
+            real, RE.run = RE.run, fake_run
+            try:
+                got = RE.lockfile_for(work, 'left-pad', '1.2.3')['pinned_exactly']
+            finally:
+                RE.run = real
+            if got is not want:
+                v.append(f'{label}: pinned_exactly is {got!r}, expected {want!r}')
     return {'violations': v, 'ok': not v}
 
 
@@ -479,6 +594,9 @@ CHECKS = {
     'exact_pin': check_exact_pin,
     'arm_names_and_nvd': check_arm_names_and_nvd,
     'failure_classes': check_failure_classes,
+    'sibling_package_not_answered_for': check_sibling_package_not_answered_for,
+    'related_is_not_identity': check_related_is_not_identity,
+    'unevaluated_pin_is_not_a_pass': check_unevaluated_pin_is_not_a_pass,
 }
 
 
@@ -545,6 +663,97 @@ FAULTS = [
 ]
 
 
+# Checks that build their own input cannot be reached by mutating a fixture - the
+# R37c debt, where `osv_terminators` went un-mutated for exactly this reason. These
+# faults patch the module under test instead, and each one is the PREVIOUS behaviour
+# restored verbatim, so the mutation proves the fix is what the check is holding.
+
+def _c_pin_compared_unconditionally():
+    """R37e-P1 as it stood: compare declared_range to version whatever npm did."""
+    real = RE.lockfile_for
+
+    def patched(work, package, version):
+        result = real(work, package, version)
+        result['pinned_exactly'] = result['declared_range'] == version
+        return result
+
+    RE.lockfile_for = patched
+    return lambda: setattr(RE, 'lockfile_for', real)
+
+
+def _c_unsupported_protocol_merged_into_other():
+    """R37e-P2 as it stood: EUNSUPPORTEDPROTOCOL indistinguishable from unknown."""
+    real = RE.classify_failure
+
+    def patched(result):
+        blob = ((result.get('stderr') or '') + (result.get('stdout') or '')).lower()
+        if 'eunsupportedprotocol' in blob or 'unsupported url type' in blob:
+            return 'other'
+        return real(result)
+
+    RE.classify_failure = patched
+    return lambda: setattr(RE, 'classify_failure', real)
+
+
+def _c_sibling_filter_dropped():
+    """Answer from every affected entry, not only this package's."""
+    real = RE.osv_recommendation
+    RE.osv_recommendation = _osv_recommendation_no_name_filter
+    return lambda: setattr(RE, 'osv_recommendation', real)
+
+
+def _osv_recommendation_no_name_filter(scans_, package, installed, targets, semver):
+    """`osv_recommendation` with the affected-package name check removed."""
+    record = scans_['osv_scanner']
+    wanted, candidates, notes = set(targets), [], []
+    for res in (record.get('parsed') or {}).get('results', []) or []:
+        for pkg in res.get('packages', []) or []:
+            if (pkg.get('package') or {}).get('name') != package:
+                continue
+            for vuln in pkg.get('vulnerabilities', []) or []:
+                if not ({vuln.get('id')} | set(vuln.get('aliases') or [])) & wanted:
+                    continue
+                for affected in vuln.get('affected', []) or []:
+                    for rng in affected.get('ranges', []) or []:
+                        picked = RE.fix_for_range(rng, installed, semver, notes)
+                        if picked:
+                            candidates.append({'version': picked,
+                                               'advisory': vuln.get('id'),
+                                               'range_type': rng.get('type')})
+    if not candidates:
+        return {'version': None, 'notes': notes, 'source': 'no-filter mutant'}
+    return {'version': semver.max_version([c['version'] for c in candidates]),
+            'candidates': candidates, 'notes': notes, 'source': 'no-filter mutant'}
+
+
+def _c_related_folded_into_identity():
+    """Credit the scanner with ids it only listed as `related`."""
+    real = RE.ids_from_osv
+
+    def patched(parsed):
+        out = set(real(parsed))
+        for res in (parsed or {}).get('results', []) or []:
+            for pkg in res.get('packages', []) or []:
+                for vuln in pkg.get('vulnerabilities', []) or []:
+                    out.update(vuln.get('related') or [])
+        return sorted(out)
+
+    RE.ids_from_osv = patched
+    return lambda: setattr(RE, 'ids_from_osv', real)
+
+
+CODE_FAULTS = [
+    ('a pin reported as exact on an install that never ran',
+     _c_pin_compared_unconditionally, 'unevaluated_pin_is_not_a_pass'),
+    ('an uninstallable published manifest filed under "other"',
+     _c_unsupported_protocol_merged_into_other, 'failure_classes'),
+    ("a sibling package's fix answered for this package",
+     _c_sibling_filter_dropped, 'sibling_package_not_answered_for'),
+    ('`related` ids credited to the scanner as findings',
+     _c_related_folded_into_identity, 'related_is_not_identity'),
+]
+
+
 def fresh():
     return {'npm': json.loads(json.dumps(NPM_AUDIT)),
             'osv': json.loads(json.dumps(OSV_SCANNER))}
@@ -569,8 +778,21 @@ def self_test():
             print(f'  [PASS] {label}: caught by {", ".join(failing)}')
         else:
             print(f'  [NOT CAUGHT] {label} (expected {expect}, failing: {failing})')
-    ok = caught == len(FAULTS)
-    print(f"SELF-TEST: {'PASS' if ok else 'FAIL'}: {caught}/{len(FAULTS)} caught")
+    for label, patch, expect in CODE_FAULTS:
+        restore = patch()
+        try:
+            got = run(fresh())
+        finally:
+            restore()
+        failing = [n for n, c in got['checks'].items() if not c['ok']]
+        if expect in failing:
+            caught += 1
+            print(f'  [PASS] {label}: caught by {", ".join(failing)}')
+        else:
+            print(f'  [NOT CAUGHT] {label} (expected {expect}, failing: {failing})')
+    total = len(FAULTS) + len(CODE_FAULTS)
+    ok = caught == total
+    print(f"SELF-TEST: {'PASS' if ok else 'FAIL'}: {caught}/{total} caught")
     return 0 if ok else 1
 
 
