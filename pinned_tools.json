@@ -1,0 +1,20 @@
+{
+  "note": "Pinned tooling for the H2 live census (protocol section 6). The workflow REFUSES to run while any sha256 below is still FILL_ME: a census whose scanner version drifts between shards is not one experiment.",
+  "osv_scanner": {
+    "version": "v2.2.4",
+    "asset": "osv-scanner_linux_amd64",
+    "url": "https://github.com/google/osv-scanner/releases/download/v2.2.4/osv-scanner_linux_amd64",
+    "sha256": "7702cd1e5d9f5059dd9570f4ad967f27d3c5f5391b371ec937b384c238177f55",
+    "size_bytes": 54157496,
+    "recorded": "2026-08-17, downloaded to a temp file, hashed, deleted. Nothing was installed locally.",
+    "how_to_refill": "curl -sSfL <url> | sha256sum  -> paste the digest here, commit, re-run"
+  },
+  "node": {
+    "version": "22.20.0",
+    "note": "Same major as the offline semver oracle (tools/h2_semver_oracle). npm ships with it and its version is recorded per run."
+  },
+  "semver": {
+    "version": "7.8.5",
+    "note": "Installed in the runner for the range arithmetic. Same version the offline oracle used, so R36 and R37 ask npm's semver the same questions."
+  }
+}

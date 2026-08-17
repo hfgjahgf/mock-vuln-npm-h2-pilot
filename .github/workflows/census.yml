@@ -1,0 +1,160 @@
+name: h2 real-pipeline census
+
+# Two-phase census over the environments in H2_REAL_ENVIRONMENTS.json.
+# Sharded, never sampled: if runners are the constraint, raise shard_count.
+#
+# `shards` selects WHICH shards run, so the engineering pre-check can do one or two of
+# them instead of spawning the whole matrix (R37b-P2), and `limit` caps how many
+# environments each shard attempts. A pre-check run must be discarded, not reported.
+#
+# Protocol: h2-real-protocol-4 §4, §6, §7.
+
+on:
+  workflow_dispatch:
+    inputs:
+      shard_count:
+        description: 'Total number of shards the census is divided into'
+        required: true
+        default: '32'
+      shards:
+        description: 'JSON list of shard indices to run, e.g. [0] for a pre-check'
+        required: true
+        default: 'all'
+      limit:
+        description: 'Max environments per shard (0 = no limit). Pre-check only.'
+        required: true
+        default: '0'
+
+# No secrets, nothing writable. Thousands of unfamiliar packages get resolved in here.
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Refuse to run on unpinned tooling
+        run: |
+          python - <<'PY'
+          import json, sys
+          pin = json.load(open('pinned_tools.json'))
+          if pin['osv_scanner']['sha256'] == 'FILL_ME':
+              sys.exit(
+                  'pinned_tools.json still says FILL_ME for osv-scanner. A census whose '
+                  'scanner could differ between shards is not one experiment. Run the '
+                  'pre-check, record the digest, commit it, then re-run.')
+          print('pinned:', pin['osv_scanner']['version'],
+                pin['osv_scanner']['sha256'][:16] + '...')
+          PY
+
+      - id: plan
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          count = int(os.environ['COUNT'])
+          raw = os.environ['SHARDS'].strip()
+          chosen = list(range(count)) if raw in ('all', '') else json.loads(raw)
+          bad = [s for s in chosen if not 0 <= s < count]
+          if bad:
+              raise SystemExit(f'shard indices out of range: {bad}')
+          print('shards=' + json.dumps(chosen))
+          PY
+        env:
+          COUNT: ${{ github.event.inputs.shard_count }}
+          SHARDS: ${{ github.event.inputs.shards }}
+
+  census:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false          # one bad package must not cancel the census
+      max-parallel: 20
+      matrix:
+        shard: ${{ fromJson(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'      # pinned: same major as the offline semver oracle
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install semver for the runner-side range checks
+        run: npm install --no-save --ignore-scripts semver@7.8.5
+
+      - name: Install osv-scanner at the pinned version, checksum verified
+        run: |
+          URL=$(python -c "import json;print(json.load(open('pinned_tools.json'))['osv_scanner']['url'])")
+          WANT=$(python -c "import json;print(json.load(open('pinned_tools.json'))['osv_scanner']['sha256'])")
+          curl -sSfL -o /tmp/osv-scanner "$URL"
+          GOT=$(sha256sum /tmp/osv-scanner | cut -d' ' -f1)
+          echo "expected $WANT"
+          echo "got      $GOT"
+          # A scanner that is not the pinned one invalidates the whole census.
+          test "$GOT" = "$WANT"
+          sudo install -m 0755 /tmp/osv-scanner /usr/local/bin/osv-scanner
+          osv-scanner --version
+
+      - name: Record tool versions and run metadata
+        run: |
+          mkdir -p out
+          python - <<'PY' > out/tool_versions.json
+          import json, os, subprocess, datetime
+
+          def v(cmd):
+              try:
+                  return subprocess.run(cmd, capture_output=True, text=True).stdout.strip()
+              except OSError as exc:
+                  return f'unavailable: {exc}'
+
+          json.dump({
+              'node': v(['node', '--version']),
+              'npm': v(['npm', '--version']),
+              'osv_scanner': v(['osv-scanner', '--version']),
+              # Which registry answered the audit endpoint, and which semver did the
+              # range arithmetic - both change the result and neither is implied by the
+              # tool versions above (R37c-P2).
+              'npm_registry': v(['npm', 'config', 'get', 'registry']),
+              'semver_package': v(['npm', 'ls', 'semver', '--json', '--depth=0']),
+              'runner_image': os.environ.get('ImageOS', 'unknown'),
+              'runner_image_version': os.environ.get('ImageVersion', 'unknown'),
+              'runner_arch': os.environ.get('RUNNER_ARCH', 'unknown'),
+              'pinned': json.load(open('pinned_tools.json')),
+              'run_started_utc': datetime.datetime.now(
+                  datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+          }, open('/dev/stdout', 'w'), indent=1, sort_keys=True)
+          PY
+          cat out/tool_versions.json
+
+      - name: Run shard
+        run: |
+          python scripts/run_environment.py \
+            --spec data/H2_REAL_ENVIRONMENTS.json \
+            --unified data/H2_UNIFIED_RECOMMENDATIONS.json \
+            --shard ${{ matrix.shard }} \
+            --shard-count ${{ github.event.inputs.shard_count }} \
+            --limit ${{ github.event.inputs.limit }} \
+            --out out/shard-${{ matrix.shard }}.jsonl \
+            --raw-out out/raw-${{ matrix.shard }}.jsonl.gz
+        # A shard that dies mid-way must still hand back what it has, so the ingest can
+        # tell "environment failed" from "environment never attempted" (protocol §9,
+        # no_silent_exclusion).
+        continue-on-error: true
+
+      - name: Upload shard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          # Includes raw-*.jsonl.gz: the stdout each raw_sha256 was taken over, so the
+          # hashes can actually be verified (protocol §7).
+          name: census-shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 90

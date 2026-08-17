@@ -1,0 +1,9 @@
+# The thesis repository pins data/*.json by CONTENT HASH, and the runner is Linux.
+# Without this, a checkout on Windows would hand the consumer CRLF bytes and the hash
+# would not match what was pinned - the file would be "the same file" by name and a
+# different one by content.
+* text eol=lf
+*.json text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.yml text eol=lf
