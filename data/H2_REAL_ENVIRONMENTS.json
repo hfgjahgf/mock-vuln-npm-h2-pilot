@@ -45084,11 +45084,11 @@
   "file": "H2_R36_PREDICTION_SIDECAR.json",
   "note": "R36 predictions live there, not here. The PIPELINE reads this environment file and the Unified manifest, and nothing else - the sidecar is read only by the offline comparison, and is never copied into the pipeline repository."
  },
- "protocol_version": "h2-real-protocol-5",
+ "protocol_version": "h2-real-protocol-6",
  "provenance_sha256": {
-  "generator": "9ab0179d54fdcc82c70f239720924051eada099f37eb7155d6f95a24c41e8610",
+  "generator": "99026d028652b566f657a7a6f20d0cff918febb8220d24aea6e0633d6825a2f5",
   "note": "Content hashes, not a commit - an artefact is generated before the commit that carries it, and embedding HEAD would break --check (R23b-F5).",
-  "protocol": "53c2daf5ff2346b69f904df5e176f4e1d4b7e3ad66168607d3b2a9d2808b1ff8"
+  "protocol": "d900c0cfe11a5a1e95fb20ee2f3af57330c0c58e67dc705b39f52077b763336f"
  },
  "schema": "h2-real-environments/2"
 }

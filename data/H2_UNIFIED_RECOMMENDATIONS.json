@@ -34142,10 +34142,10 @@
   "h2_query_ledger.json": "3b4a78d9601f68772a141d742e323e7fab9072d3567c20f7dbb0df277f5352c0"
  },
  "note": "The Unified arm answers ONLY from here. It is the frozen model, not a live lookup: it cannot see anything published after snapshot_T. The protocol discloses that asymmetry and, since R37c, does NOT claim a direction for it - live drift can hurt either side. The pipeline must not derive a Unified recommendation any other way.",
- "protocol_version": "h2-real-protocol-5",
+ "protocol_version": "h2-real-protocol-6",
  "provenance_sha256": {
-  "generator": "2041687d802b5b15cd73d0eeb17d662bf31e5738a8d525a266fa637a04b66c3c",
-  "protocol": "53c2daf5ff2346b69f904df5e176f4e1d4b7e3ad66168607d3b2a9d2808b1ff8"
+  "generator": "58510fb8eae15280991ed05a7b8348dac2f54553ad14598fc84a0498fc19241d",
+  "protocol": "d900c0cfe11a5a1e95fb20ee2f3af57330c0c58e67dc705b39f52077b763336f"
  },
  "schema": "h2-unified-recommendations/1"
 }

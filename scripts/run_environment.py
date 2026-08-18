@@ -26,7 +26,7 @@ R37c corrected six things a review reproduced with counterexamples:
   - a scanner that failed to run was indistinguishable from a scanner that found nothing
   - the pinned version was not pinned in package.json, so save-prefix could widen it
 
-Protocol: H2_REAL_PIPELINE_PROTOCOL.md (h2-real-protocol-5).
+Protocol: H2_REAL_PIPELINE_PROTOCOL.md (h2-real-protocol-6).
 """
 import argparse
 import base64
