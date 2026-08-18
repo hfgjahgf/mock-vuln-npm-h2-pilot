@@ -1,9 +1,9 @@
-# H2 real-pipeline validation — instantiation kit
+﻿# H2 real-pipeline validation 鈥?instantiation kit
 
 Everything the live GitHub Actions census needs. **This directory is version-controlled
 in the thesis repo; the repository it becomes is separate and public.**
 
-Target repository: **`hfgjahgf/mock-vuln-npm-h2-pilot`** — the one v1's pilot already
+Target repository: **`hfgjahgf/mock-vuln-npm-h2-pilot`** 鈥?the one v1's pilot already
 used. v1's own content stays in its history; this kit replaces the working tree, because
 v1 ran a different data model and a different four arms (`nvd_direct` / `grype_native` /
 `canonical_enrichment` / `canonical_direct`, last touched 2026-07-03).
@@ -14,7 +14,7 @@ any run. Inputs: `H2_REAL_ENVIRONMENTS.json` (1,556 environments) and
 
 ## What it does
 
-Per environment — one `(package, installed_version)` pair, installed as a **top-level
+Per environment 鈥?one `(package, installed_version)` pair, installed as a **top-level
 direct dependency**:
 
 ```
@@ -41,10 +41,10 @@ before the re-scan, not after it.
 
 | Arm id | What answers |
 |---|---|
-| `npm_registry_audit_live` | `npm audit` — the configured registry's audit endpoint (GitHub Advisory Database behind it). Not called "the GHSA arm": that would overstate what is asked. |
-| `osv_scanner_live` | `osv-scanner` **v2 (`scan` subcommand)**, with the fix bound to the **target advisory** and to the **event segment containing the installed version** — a range can hold several segments, and `last_affected` / `limit` / `GIT` never count as a fix. |
+| `npm_registry_audit_live` | `npm audit` 鈥?the configured registry's audit endpoint (GitHub Advisory Database behind it). Not called "the GHSA arm": that would overstate what is asked. |
+| `osv_scanner_live` | `osv-scanner` **v2 (`scan` subcommand)**, with the fix bound to the **target advisory** and to the **event segment containing the installed version** 鈥?a range can hold several segments, and `last_affected` / `limit` / `GIT` never count as a fix. |
 | `unified_frozen_model` | **Only** `H2_UNIFIED_RECOMMENDATIONS.json`. The pipeline computes nothing for this arm. |
-| `nvd` | `not_evaluated_no_operational_scanner`, **excluded from every denominator**. No off-the-shelf NVD-only npm scanner exists — that is a limit of the tool ecosystem, not a measurement of NVD. |
+| `nvd` | `not_evaluated_no_operational_scanner`, **excluded from every denominator**. No off-the-shelf NVD-only npm scanner exists 鈥?that is a limit of the tool ecosystem, not a measurement of NVD. |
 
 Every arm's fix is re-scanned by **both** scanners. No tool grades its own homework.
 
@@ -93,25 +93,25 @@ Then download the artifacts and run the offline ingest back in the thesis repo.
   may invoke the package manager's scripts. Fixes are applied by us with
   `--package-lock-only --ignore-scripts`.
 - **No smoke import.** `require()` would execute third-party code, and would misfire on
-  ESM-only, browser-only and CLI packages anyway (protocol §5.3).
+  ESM-only, browser-only and CLI packages anyway (protocol 搂5.3).
 
 ## Reproducibility
 
 - osv-scanner pinned by version **and** SHA-256, verified before install.
 - Node pinned; npm and OSV database state recorded per run.
 - **The raw stdout behind every `raw_sha256` is kept** (`raw-*.jsonl.gz`, uploaded with
-  the shard) — a checksum with nothing to check is not provenance.
-- **The `package-lock.json` and the `npm ls` tree behind every scan are kept too** —
+  the shard) 鈥?a checksum with nothing to check is not provenance.
+- **The `package-lock.json` and the `npm ls` tree behind every scan are kept too** 鈥?
   otherwise there is no way to say afterwards which tree was scanned.
 - npm registry, runner image and the `semver` package version are recorded per run.
 - The live databases change daily, so the run happens once and its outputs are frozen on
   return. Everything downstream of that is offline and byte-reproducible.
 
-## Order of work (protocol §7 - do not reorder)
+## Order of work (protocol 搂7 - do not reorder)
 
-1. fix the runner → 2. **engineering pre-check, results discarded** → 3. write and test
-`ingest_h2_real_run.py` and `Test_h2_real_run.py` **against the pre-check output** →
-4. freeze the runner/ingest/gate hashes → 5. **one** full census.
+1. fix the runner 鈫?2. **engineering pre-check, results discarded** 鈫?3. write and test
+`ingest_h2_real_run.py` and `Test_h2_real_run.py` **against the pre-check output** 鈫?
+4. freeze the runner/ingest/gate hashes 鈫?5. **one** full census.
 
 > Running the full census first and writing the ingest afterwards means a missing field
 > is discovered when that live-database instant has already passed.
@@ -119,15 +119,15 @@ Then download the artifacts and run the offline ingest back in the thesis repo.
 ## Testing the parsers before trusting them
 
 ```bash
-python tests/Test_pipeline_parsers.py             # 21 checks
-python tests/Test_pipeline_parsers.py --self-test  # 12 mutations
+python tests/Test_pipeline_parsers.py             # 22 checks
+python tests/Test_pipeline_parsers.py --self-test  # 14 mutations
 ```
 
 These run offline against fixtures. **If the real scanner output differs from the
-fixtures, the fixtures and the parser change — never the criteria** (protocol §5.3b).
+fixtures, the fixtures and the parser change 鈥?never the criteria** (protocol 搂5.3b).
 
 ## What this cannot answer
 
 Every fixture has one target instance at the top level, so **transitive pinning and
 peer-dependency conflicts are out of scope**, and R36's `conflict = 0` is still not
-tested against a real dependency tree. Protocol §3 states both costs.
+tested against a real dependency tree. Protocol 搂3 states both costs.

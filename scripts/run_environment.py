@@ -29,6 +29,7 @@ R37c corrected six things a review reproduced with counterexamples:
 Protocol: H2_REAL_PIPELINE_PROTOCOL.md (h2-real-protocol-5).
 """
 import argparse
+import base64
 import datetime
 import gzip
 import hashlib
@@ -94,6 +95,8 @@ def run(cmd, cwd, timeout=300):
                 'stderr': p.stderr.decode('utf-8', errors='replace')[-4000:],
                 'stdout_bytes_sha256': hashlib.sha256(p.stdout).hexdigest(),
                 'stdout_bytes': len(p.stdout),
+                # Carried so a lossy decode can still be archived verbatim (R37g-P2).
+                'stdout_raw_bytes': p.stdout,
                 # True means the stored text is a lossy rendering and only
                 # stdout_bytes_sha256 attests the original.
                 'stdout_decoding_lossy': text.encode('utf-8') != p.stdout,
@@ -128,8 +131,14 @@ class RawStore:
     Two digests, because they answer different questions (R37f-P2). `sha256` is over the
     stored text and is what makes this file self-verifying. `stdout_bytes_sha256` is over
     the bytes the process wrote. They are equal whenever decoding was lossless, which is
-    the normal case; when `decoding_lossy` is true the stored text is a rendering and
-    only the byte digest attests the original.
+    the normal case.
+
+    When decoding WAS lossy the stored text is a rendering, and a digest of bytes nobody
+    kept cannot be recomputed - the byte digest would be unverifiable in exactly the case
+    it exists for (R37g-P2). So a lossy row also carries `content_b64`, the original
+    bytes themselves, and dedup keys on the byte digest: two different byte sequences can
+    decode to the same replaced text, and keying on the text alone would silently discard
+    the second one's bytes.
     """
 
     def __init__(self, path):
@@ -138,13 +147,19 @@ class RawStore:
         self.handle = gzip.open(self.path, 'wt', encoding='utf-8')
         self.seen = set()
 
-    def keep(self, kind, text, meta=None):
+    def keep(self, kind, text, meta=None, raw_bytes=None):
         digest = sha256(text)
-        if digest not in self.seen:
-            self.seen.add(digest)
-            self.handle.write(json.dumps(
-                {'kind': kind, 'sha256': digest, 'content': text or '',
-                 'meta': meta or {}}, ensure_ascii=False) + '\n')
+        lossy = raw_bytes is not None and (text or '').encode('utf-8') != raw_bytes
+        key = ('b', hashlib.sha256(raw_bytes).hexdigest()) if lossy else ('t', digest)
+        if key not in self.seen:
+            self.seen.add(key)
+            row = {'kind': kind, 'sha256': digest, 'content': text or '',
+                   'meta': meta or {}}
+            if lossy:
+                row['content_b64'] = base64.b64encode(raw_bytes).decode('ascii')
+                row['stdout_bytes_sha256'] = key[1]
+                row['decoding_lossy'] = True
+            self.handle.write(json.dumps(row, ensure_ascii=False) + '\n')
         return digest
 
     def keep_result(self, kind, result):
@@ -155,7 +170,8 @@ class RawStore:
                           'stdout_bytes_sha256': result.get('stdout_bytes_sha256'),
                           'stdout_bytes': result.get('stdout_bytes'),
                           'decoding_lossy': result.get('stdout_decoding_lossy'),
-                          'stderr': result.get('stderr')})
+                          'stderr': result.get('stderr')},
+                         raw_bytes=result.get('stdout_raw_bytes'))
 
     def close(self):
         self.handle.close()
@@ -383,6 +399,14 @@ def npm_audit_recommendation(scans, package, work=None, store=None):
         if applied is None:
             return {'version': None, 'source': 'npm audit fixAvailable true',
                     'resolved_via_audit_fix': True, 'unresolved': True}
+        if not applied['audit_fix_ran']:
+            # We could not ask. That is our failure, not npm declining to act, so it is
+            # excluded rather than counted against this arm.
+            return {'version': None,
+                    'source': 'npm audit fixAvailable true, audit fix did not run',
+                    'resolved_via_audit_fix': True,
+                    'remediation_unattemptable': 'audit_fix_did_not_run',
+                    'audit_fix_timed_out': applied['audit_fix_timed_out']}
         if not applied['lockfile_changed']:
             # audit fix ran and rewrote nothing. That is no action, not a fix whose
             # version happens to equal the installed one (R37f-P0).
@@ -455,11 +479,18 @@ def resolve_audit_fix(work, package, store):
     version = (((tree or {}).get('dependencies') or {}).get(package, {}).get('version')
                or version_from_lockfile(work, package))
     changed = after is not None and after != before
+    # A fix that never ran is not a fix that found nothing to do (R37g). exit_code None
+    # means the process did not start or timed out - on a large tree `npm audit fix` can
+    # exceed its budget, and recording that as `no_action_generated` would put a failure
+    # of ours into npm's column. Same rule as `scanner_error` vs "no vulnerabilities".
+    ran = fixed.get('exit_code') is not None
     out = {'lockfile': after if changed else None,
            'manifest': manifest if changed else None,
            'lockfile_sha256': sha256(after) if changed else None,
            'top_level_version': version,
-           'lockfile_changed': changed,
+           'lockfile_changed': changed and ran,
+           'audit_fix_ran': ran,
+           'audit_fix_timed_out': bool(fixed.get('timed_out')),
            'audit_fix_exit_code': fixed.get('exit_code'),
            'audit_fix_lockfile_sha256_before': sha256(before) if before else None}
     if store is not None and changed:
@@ -766,6 +797,15 @@ def process(env, unified_versions, work, store):
             record['phase2'][arm] = {'outcome': 'scanner_unusable',
                                      'reason': rec['unusable'],
                                      'excluded_from_operational_denominator': True}
+            continue
+        if rec.get('remediation_unattemptable'):
+            # The scanner answered; we failed to carry the answer out. Distinct from
+            # `no_action_generated`, and excluded rather than scored (R37g).
+            record['phase2'][arm] = {
+                'outcome': 'remediation_action_not_executable',
+                'reason': rec['remediation_unattemptable'],
+                'timed_out': rec.get('audit_fix_timed_out'),
+                'excluded_from_operational_denominator': True}
             continue
         # npm's `fixAvailable: true` remediation is a whole lockfile, not a version
         # (R37f-P0). Everything else names a version for the top-level package.

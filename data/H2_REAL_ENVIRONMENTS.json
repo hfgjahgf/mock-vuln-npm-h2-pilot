@@ -45088,7 +45088,7 @@
  "provenance_sha256": {
   "generator": "9ab0179d54fdcc82c70f239720924051eada099f37eb7155d6f95a24c41e8610",
   "note": "Content hashes, not a commit - an artefact is generated before the commit that carries it, and embedding HEAD would break --check (R23b-F5).",
-  "protocol": "d8d025700c6a5e9103329dbcfdf48cc33152b06e27fad925d736fb6796bee678"
+  "protocol": "53c2daf5ff2346b69f904df5e176f4e1d4b7e3ad66168607d3b2a9d2808b1ff8"
  },
  "schema": "h2-real-environments/2"
 }

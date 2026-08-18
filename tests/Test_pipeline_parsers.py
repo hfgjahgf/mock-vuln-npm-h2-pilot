@@ -19,6 +19,9 @@ when no fixture contained one.
 Nothing here talks to a registry or a scanner. If the real shapes differ from these
 fixtures, THE FIXTURES AND THE PARSER CHANGE, never the criteria (protocol §5.3b).
 """
+import base64
+import gzip
+import hashlib
 import json
 import sys
 import tempfile
@@ -601,7 +604,20 @@ def check_audit_fix_carries_a_lockfile(art):
         if got['lockfile'] is not None:
             v.append('a lockfile was carried although the fix rewrote nothing')
 
-        # 2. audit fix rewrote the tree, and exited 1 because something remains. That is
+        # 2. audit fix never ran at all - timed out, or the process failed to start.
+        #    That is our failure, not npm declining to act.
+        baseline()
+        real, RE.run = RE.run, stub(changed=False, exit_code=None)
+        try:
+            got = RE.resolve_audit_fix(work, 'left-pad', None)
+        finally:
+            RE.run = real
+        if got['audit_fix_ran']:
+            v.append('a fix that never ran was reported as having run')
+        if got['lockfile_changed']:
+            v.append('a fix that never ran was reported as a remediation')
+
+        # 3. audit fix rewrote the tree, and exited 1 because something remains. That is
         #    a real partial remediation and must be carried as the lockfile.
         baseline()
         real, RE.run = RE.run, stub(changed=True, exit_code=1)
@@ -615,6 +631,33 @@ def check_audit_fix_carries_a_lockfile(art):
             v.append('the transitive change npm made was not carried')
         if got['top_level_version'] != '1.3.0':
             v.append(f"top-level version reported as {got['top_level_version']}")
+
+    # A fix that could not be attempted must not be scored as "no action" (R37g). Real
+    # instance: @oneuptime/common@9.5.13 carries a 469 KB tree, and `npm audit fix` there
+    # is the kind of call that can exceed its budget.
+    with tempfile.TemporaryDirectory() as tmp2:
+        work2 = Path(tmp2)
+        RE.write_manifest(work2, 'left-pad', '1.0.0')
+        (work2 / 'package-lock.json').write_text('{}', encoding='utf-8')
+
+        def timed_out(cmd, cwd, timeout=300):
+            if cmd[:3] == ['npm', 'audit', 'fix']:
+                return {'argv': cmd, 'exit_code': None, 'stdout': '',
+                        'stderr': 'TIMEOUT', 'timed_out': True, 'seconds': 600.0}
+            return {'argv': cmd, 'exit_code': 0, 'stdout': '', 'stderr': '',
+                    'seconds': 0.0}
+        real, RE.run = RE.run, timed_out
+        try:
+            rec_t = RE.npm_audit_recommendation(
+                scans(npm={'auditReportVersion': 2, 'vulnerabilities': {
+                    'left-pad': {'name': 'left-pad', 'via': [], 'fixAvailable': True}}}),
+                'left-pad', work2, None)
+        finally:
+            RE.run = real
+        if not rec_t.get('remediation_unattemptable'):
+            v.append('a timed-out audit fix was not distinguished from "no fix"')
+        if rec_t.get('tool_says_no_fix'):
+            v.append('a timed-out audit fix was recorded as npm saying there is no fix')
 
     # The recommendation must expose that lockfile, or process() cannot install it.
     rec = RE.npm_audit_recommendation(scans(npm=art['npm']), 'left-pad')
@@ -654,6 +697,51 @@ def check_related_is_not_identity(art):
         v.append(f'`related` id {bad} was counted as an identifier the scanner reported')
     if 'CVE-2026-0012' not in got:
         v.append('the advisory carrying `related` lost its own aliases')
+    return {'violations': v, 'ok': not v}
+
+
+def check_lossy_output_keeps_its_bytes(art):
+    """A digest of bytes nobody kept cannot be recomputed (R37g-P2).
+
+    `errors='replace'` rewrites invalid UTF-8, so on a lossy decode the stored text is a
+    rendering and `stdout_bytes_sha256` has no original to check against - unverifiable
+    in exactly the case it exists for. A lossy row must therefore carry the bytes.
+
+    Two different byte sequences can also decode to the SAME replaced text, so dedup must
+    key on the bytes when they are lossy, or the second one's original is silently lost.
+    """
+    v = []
+    bad_a = b'{"a": "\xff\xfe"}'
+    bad_b = b'{"a": "\xfe\xff"}'
+    good = b'{"a": "ok"}'
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / 'raw.jsonl.gz'
+        store = RE.RawStore(path)
+        for blob in (good, bad_a, bad_b):
+            store.keep_result('probe', {
+                'stdout': blob.decode('utf-8', errors='replace'),
+                'stdout_raw_bytes': blob, 'argv': ['probe'], 'exit_code': 0,
+                'stdout_bytes_sha256': hashlib.sha256(blob).hexdigest(),
+                'stdout_decoding_lossy':
+                    blob.decode('utf-8', errors='replace').encode('utf-8') != blob})
+        store.close()
+        with gzip.open(path, 'rt', encoding='utf-8') as fh:
+            rows = [json.loads(line) for line in fh]
+
+    lossy = [r for r in rows if r.get('decoding_lossy')]
+    clean = [r for r in rows if not r.get('decoding_lossy')]
+    if len(lossy) != 2:
+        v.append(f'two distinct lossy outputs collapsed into {len(lossy)} row(s)')
+    for r in lossy:
+        if 'content_b64' not in r:
+            v.append('a lossy row kept no bytes, so its byte digest cannot be checked')
+            continue
+        raw = base64.b64decode(r['content_b64'])
+        if hashlib.sha256(raw).hexdigest() != r.get('stdout_bytes_sha256'):
+            v.append('the kept bytes do not rehash to the recorded byte digest')
+    for r in clean:
+        if 'content_b64' in r:
+            v.append('a losslessly decoded row was duplicated as base64 for no reason')
     return {'violations': v, 'ok': not v}
 
 
@@ -715,6 +803,7 @@ CHECKS = {
     'related_is_not_identity': check_related_is_not_identity,
     'title_is_not_identity': check_title_is_not_identity,
     'audit_fix_carries_a_lockfile': check_audit_fix_carries_a_lockfile,
+    'lossy_output_keeps_its_bytes': check_lossy_output_keeps_its_bytes,
     'unevaluated_pin_is_not_a_pass': check_unevaluated_pin_is_not_a_pass,
 }
 
@@ -892,7 +981,34 @@ def _c_audit_fix_returns_a_version():
     return lambda: setattr(RE, 'resolve_audit_fix', real)
 
 
+def _c_lossy_bytes_discarded():
+    """R37g-P2 as it stood: store the rendered text, keep no bytes, dedup on the text."""
+    real = RE.RawStore.keep
+
+    def patched(self, kind, text, meta=None, raw_bytes=None):
+        return real(self, kind, text, meta, raw_bytes=None)
+
+    RE.RawStore.keep = patched
+    return lambda: setattr(RE.RawStore, 'keep', real)
+
+
+def _c_audit_fix_failure_is_no_action():
+    """R37g as it stood: a fix that never ran fell through to "changed nothing"."""
+    real = RE.resolve_audit_fix
+
+    def patched(work, package, store):
+        out = real(work, package, store)
+        return {**out, 'audit_fix_ran': True}
+
+    RE.resolve_audit_fix = patched
+    return lambda: setattr(RE, 'resolve_audit_fix', real)
+
+
 CODE_FAULTS = [
+    ('a remediation that never ran recorded as "npm found nothing to do"',
+     _c_audit_fix_failure_is_no_action, 'audit_fix_carries_a_lockfile'),
+    ('the bytes behind a lossy decode thrown away',
+     _c_lossy_bytes_discarded, 'lossy_output_keeps_its_bytes'),
     ('advisory ids harvested out of prose titles',
      _c_titles_scanned_for_ids, 'title_is_not_identity'),
     ('audit fix reduced to a version number, unchanged tree treated as a fix',
