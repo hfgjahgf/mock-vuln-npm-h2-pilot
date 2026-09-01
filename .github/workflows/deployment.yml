@@ -149,8 +149,11 @@ jobs:
                   bad.append(section)
           meta = json.load(open(model / 'dataset_metadata.json'))
           print('model_version', meta['model_version'])
-          # generated_at_utc differs on every rebuild by construction, and is the only
-          # key that does; the sections above are the comparison that matters.
+          # Two keys record the machine rather than the data and cannot match across
+          # them: generated_at_utc, a timestamp, and input_dir, the absolute path the
+          # inputs were read from. This comment said generated_at_utc was the only one
+          # - true of two rebuilds on one laptop, false here. The sections above are
+          # the comparison that matters and they are byte-exact.
           if bad:
               raise SystemExit(f'E1 FAILED for {bad}')
           print(f'E1 PASS: {len(seal)} sections match the sealed model')
@@ -271,6 +274,18 @@ jobs:
               'github_sha': os.environ.get('GH_SHA', 'unknown'),
               'github_repository': os.environ.get('GH_REPO', 'unknown'),
               'shard': os.environ.get('SHARD_INDEX', 'unknown'),
+              # The workflow inputs, recorded BY THE RUN. R37's ingest derives whether
+              # a return is an engineering pre-check or the counted run from `limit`
+              # and `shards` found here, never from a flag someone passes to the
+              # ingest - "a pre-check cannot be relabelled a census by anyone who
+              # wants it to be one". The first three R40 pre-checks recorded none of
+              # this, so that rule had nothing to read; found by looking at the
+              # artefact rather than at the workflow.
+              'workflow_inputs': {
+                  'shard_count': os.environ.get('IN_SHARD_COUNT', 'unknown'),
+                  'shards': os.environ.get('IN_SHARDS', 'unknown'),
+                  'limit': os.environ.get('IN_LIMIT', 'unknown'),
+              },
               'experiment': 'r40-deployment',
               'job_started_utc': datetime.datetime.now(
                   datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
@@ -292,6 +307,9 @@ jobs:
           GH_SHA: ${{ github.sha }}
           GH_REPO: ${{ github.repository }}
           SHARD_INDEX: ${{ matrix.shard }}
+          IN_SHARD_COUNT: ${{ github.event.inputs.shard_count }}
+          IN_SHARDS: ${{ github.event.inputs.shards }}
+          IN_LIMIT: ${{ github.event.inputs.limit }}
 
       # E1 + E2, in the shard, against the model this shard loaded. Runs BEFORE anything
       # is installed: a shard that cannot establish fidelity has nothing to say about

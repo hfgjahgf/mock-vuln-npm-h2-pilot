@@ -121,19 +121,32 @@ def model_against_seal(model_dir):
     return ok, rows
 
 
-def metadata_blocks(model_dir):
-    """The metadata comparison, minus the one key that cannot match.
+# Keys of dataset_metadata.json that record the ENVIRONMENT rather than the data, and
+# therefore cannot match across machines. Two, not one: `generated_at_utc` is a
+# timestamp, and `input_dir` is the absolute path the build read from -
+# 'D:\\...\\output\\h1_discovery' here against 'output/h1_discovery' on the runner.
+# The comment in the workflow said generated_at_utc was the only one, which was true
+# of two rebuilds on this machine and false on the machine that matters. It cost
+# nothing - E1 compares sections, not this file - but it was a claim, and it was wrong.
+ENVIRONMENT_KEYS = ('generated_at_utc', 'input_dir')
 
-    `generated_at_utc` differs on every rebuild by construction. Measured: it is the
-    ONLY key that differs. Comparing the whole file would fail for a timestamp, and
-    deleting the timestamp to make it pass would be editing the thing under test.
+
+def metadata_blocks(model_dir):
+    """The metadata comparison, minus the keys that record the machine.
+
+    Comparing the whole file would fail on a timestamp and a path; deleting either to
+    make it pass would be editing the thing under test. So the three blocks that carry
+    the DATA are compared and the two that carry the MACHINE are named.
     """
     meta = json.loads((model_dir / 'dataset_metadata.json').read_text(encoding='utf-8'))
     return {'model_version': meta.get('model_version'),
             'section_sha256': meta.get('section_sha256'),
             'inputs': meta.get('inputs'),
             'counts': meta.get('counts'),
-            'excluded_from_comparison': ['generated_at_utc']}
+            'excluded_from_comparison': list(ENVIRONMENT_KEYS),
+            'why_excluded': ('a timestamp and the absolute path the inputs were read '
+                             'from; neither is data, and both differ between any two '
+                             'machines')}
 
 
 def ledger_from_model(model_dir):
