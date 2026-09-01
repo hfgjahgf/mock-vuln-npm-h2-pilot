@@ -1,0 +1,57 @@
+{
+ "build_status": "sealed_h1",
+ "contracts_sha256": {
+  "schemas/NEWCOMBE_1998_TABLE_III.json": "dfb70f5bb37b14ad04b7c5098a5575dda0e87806d1744bc993ce5912a2602665",
+  "schemas/R27_ANALYSIS_PROTOCOL.md": "87876f332013ead82c28c56163f79ba5218961c745502cb5aaf9ae1d5cbcbe60",
+  "schemas/SOURCE_FIELD_DISPOSITION.json": "99f3fba370fc85753c2fccca1b1dc4ae60174066958b7b974780d0d38d3927de",
+  "schemas/UNIFIED_MODEL_V3_SCHEMA.json": "347e0c314242c4125364463bc2461b1b314d556db6b4d3b56ece0756a392f4dc"
+ },
+ "dataset_metadata_note": "dataset_metadata.json is deliberately NOT hashed: it carries generated_at_utc, which changes on every rebuild by design. Its section_sha256 block is cross-checked against the files by the protocol gate",
+ "frozen_matrices_note": "these must equal FROZEN_MATRIX_SHA256 and FROZEN_NO_CVE_MATRIX_SHA256 in Test_r27_protocol_provenance.py; Test_h1_seal.py checks that the manifest and the gate agree",
+ "frozen_matrices_sha256": {
+  "completeness_matrix": "3f43eebe1eea3dfe49351a329eb2569e76437ec0211f38f6a1699fd809e77b31",
+  "completeness_matrix_no_cve": "a0dca35b23d094ee24b024a0a0c541f53c706dc8dda869c0f1d7234c244ff375"
+ },
+ "model_sha256": {
+  "assertions_affected": "7bf518e483a674a850571e416edc675035697c5bd8fb8e274f08fdc9a6f62292",
+  "assertions_cwe": "0a5ce6189b970aa2e293ff6b7d568e8954153e70397cffa16ae054bb2e6eeb16",
+  "assertions_generic": "4789e8520edca962191a6a8712ff6a04a54e98acc92f970b1c2c80fed6ff4f69",
+  "assertions_severity": "de32e35a119e3f6d41656edc88c9e172ed75e98cbfef9f3b32346ede2d56d57d",
+  "completeness_matrix": "3f43eebe1eea3dfe49351a329eb2569e76437ec0211f38f6a1699fd809e77b31",
+  "completeness_matrix_no_cve": "a0dca35b23d094ee24b024a0a0c541f53c706dc8dda869c0f1d7234c244ff375",
+  "coverage_map": "fdab286ef80803c2df5db04556d652c70823812ae897aac89860abcbbd662b32",
+  "entities": "8fdc06c843f18f4aa45291cda3fc46f2f6253067750dd9d29b68f2436c38882b",
+  "entity_record_links": "4989874594e80633de6907667636ea05bd9d19ef020373961e0bb06e03432681",
+  "relations": "788c2c8ccf6a400abc19ac4797afb1c7800756c663cb94030b9316b902c4fb84",
+  "source_records": "de49d5d99518b0235cce25b3c78c4bd0febf0c297531aaa0c22c14f904314c25"
+ },
+ "model_version": "3.3.0-cve-keyed",
+ "note": "output/ is gitignored, so the model artefacts are not under version control and this manifest is their seal - the role r24b_baseline_manifest.json plays for arm 1. The contracts, results and gate reports ARE committed; hashing them here pins which revision the seal refers to",
+ "policy_code_note": "the first three are frozen and sealed at 5e35b2e by arm 1's own manifest; build_unified_v3.py is the field mapping and is sealed here. Hashes are LF-normalised",
+ "policy_code_sha256_lf": {
+  "build_identity_v2.py": "39f2bf651e69863ba29efd40ffc6ea5e4667e432c57ec6434a908b06680848c1",
+  "build_unified_v3.py": "0a351b21c7426b1fb584ffad125a343855dcbc092e7df7bb53b78ebd96ea5dcf",
+  "collect_h1.py": "3fe279c00d8f24fd95b40fc78c75870302752d1cfb5f802a733d78884a6496c7",
+  "identity_extract.py": "cb24264ec7bff233c3a9147ffcaea103f5b5ac7d7c66fb7ddd84ea1e62bc462e"
+ },
+ "protocol_version": "r27-protocol-4",
+ "purpose": "the seal on H1: identity layer, field mapping, the two content-sealed matrices, and the R27/R28 results. Anything that changes a hash below reopens H1 and must be an explicit round",
+ "reopening_note": "changing an identity rule or a field mapping REOPENS H1. The evaluation layer and H2 read this model and never modify it",
+ "results_sha256": {
+  "h1_completeness_results.json": "46ea7bf18c24282b32465862953570317fb47fecfd5103952aa6a3f51515aa3a",
+  "h1_sensitivity_results.json": "7b88ee9660574dc2dcf4b38ea20448643ab695a7e924c52736a0d06636b152ef",
+  "r24b_arm1_fidelity.json": "8fbd5493ca0ee32377dff26efd605067c483d7a37a3bc6e10a72f1af0480d2db",
+  "r24c_arm2_context.json": "d88ed371f6c3672b9d14069047ee15b36090e7d51b5857f711f220a72b79f395",
+  "r25_cve_identity.json": "923217a0a30cb7bc72062ec17db3341457b55f3ded6612d74ae774fb5d823686"
+ },
+ "sealed_at_commit": "21954dab5973386ade1fd55b6191f7b61e6a469c",
+ "sealed_at_commit_short": "21954da",
+ "verified_at_seal": {
+  "hashes_match_disk": true,
+  "note": "sealed_paths_dirty is the section D condition: no file this manifest seals has uncommitted changes. The full status is kept beside it because the generator and its gate are untracked at this moment by construction",
+  "outputs_missing": [],
+  "repository_status_at_generation": "?? h1_seal_manifest.json\n?? make_h1_seal_manifest.py",
+  "sealed_paths_dirty": false,
+  "sealed_paths_dirty_detail": ""
+ }
+}

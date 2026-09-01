@@ -1,0 +1,287 @@
+name: r40 deployment run
+
+# R40 - the deployment experiment. NOT a re-run of the sealed census, and not census.yml
+# renamed: that file ran run 32143022565 and must not be touched.
+#
+# The difference in one line: the census carried a Unified arm computed in advance on a
+# laptop and shipped as a file. Here the model is REBUILT ON THE RUNNER from hash-verified
+# frozen inputs, loaded, and queried, and every recommendation is computed during the run.
+#
+# The registered endpoints are E1 (the rebuilt model matches the H1 seal) and E2 (the
+# chain reproduces the committed ledger, scores, decisions and recommendations byte for
+# byte). Install / scan / re-scan outcomes are archived and are NOT an endpoint: the npm
+# registry and the scanner's vulnerability database have both moved since 2026-08-18, so
+# they are not comparable with the census and h2_supported is not revisited.
+#
+# Protocol: schemas/R40_DEPLOYMENT_PROTOCOL.md (r40-deployment-protocol-1).
+
+on:
+  workflow_dispatch:
+    inputs:
+      shard_count:
+        description: 'Total number of shards the run is divided into'
+        required: true
+        default: '32'
+      shards:
+        description: 'JSON list of shard indices to run, e.g. [0] for a pre-check'
+        required: true
+        default: 'all'
+      limit:
+        description: 'Max environments per shard (0 = no limit). Pre-check only.'
+        required: true
+        default: '0'
+
+# No secrets, nothing writable. Thousands of unfamiliar packages get resolved in here.
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Refuse to run without a deposit the inputs can be fetched from
+        run: |
+          python - <<'PY'
+          import json, sys
+          deposit = json.load(open('schemas/R40_INPUT_DEPOSIT.json'))['deposit']
+          if not (deposit.get('url_template') or deposit.get('url')):
+              sys.exit(
+                  'R40_INPUT_DEPOSIT.json has no url. The seven frozen inputs are '
+                  'gitignored and 323 MB; without a permanent location there is '
+                  'nothing for this runner to fetch, and a workflow that quietly '
+                  'built from whatever it found would not be this experiment.')
+          print('deposit:', deposit.get('doi') or deposit['url'])
+          PY
+
+      - name: Refuse to run on unpinned tooling
+        run: |
+          python - <<'PY'
+          import json, sys
+          pin = json.load(open('pinned_tools.json'))
+          if pin['osv_scanner']['sha256'] == 'FILL_ME':
+              sys.exit('pinned_tools.json still says FILL_ME for osv-scanner.')
+          print('pinned:', pin['osv_scanner']['version'],
+                pin['osv_scanner']['sha256'][:16] + '...')
+          PY
+
+      - id: plan
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          count = int(os.environ['COUNT'])
+          raw = os.environ['SHARDS'].strip()
+          chosen = list(range(count)) if raw in ('all', '') else json.loads(raw)
+          bad = [s for s in chosen if not 0 <= s < count]
+          if bad:
+              raise SystemExit(f'shard indices out of range: {bad}')
+          print('shards=' + json.dumps(chosen))
+          PY
+        env:
+          COUNT: ${{ github.event.inputs.shard_count }}
+          SHARDS: ${{ github.event.inputs.shards }}
+
+  # Built ONCE. Measured locally: 51 s wall clock, 1.56 GB peak working set, 40 MB of
+  # output - so rebuilding it inside all 32 shards would be 32x the download of 323 MB
+  # of inputs for no additional evidence. The shards still load and query it.
+  build-model:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch the frozen inputs and verify every one
+        run: |
+          mkdir -p output/h1_discovery
+          python - <<'PY'
+          import hashlib, json, pathlib, urllib.request
+          doc = json.load(open('schemas/R40_INPUT_DEPOSIT.json'))
+          deposit = doc['deposit']
+          # A TEMPLATE, not `{base}/{name}`. Zenodo's API form puts the file name in
+          # the middle - .../files/{name}/content - so a host whose URLs do not
+          # concatenate would have been found out here, on a runner, mid-matrix.
+          template = deposit.get('url_template')
+          base = (deposit.get('url') or '').rstrip('/')
+          out = pathlib.Path('output/h1_discovery')
+          for name, meta in sorted(doc['files'].items()):
+              url = template.replace('{name}', name) if template else f'{base}/{name}'
+              target = out / name
+              urllib.request.urlretrieve(url, target)
+              got = hashlib.sha256(target.read_bytes()).hexdigest()
+              print(f'{name}: {got[:16]} ({target.stat().st_size} bytes)')
+              # A build on an input nobody verified is a build of something else.
+              if got != meta['sha256']:
+                  raise SystemExit(
+                      f'{name}: expected {meta["sha256"]}, got {got} - refusing to '
+                      f'build the model on an input that is not the frozen one')
+          print(f'{len(doc["files"])} inputs verified')
+          PY
+
+      - name: Rebuild unified_model_v3 from the frozen inputs
+        # Frozen code, run unmodified and with no --mapping override. --out-dir is the
+        # canonical path so every downstream script finds it without being changed; on
+        # a runner that directory does not exist yet, so nothing is overwritten.
+        run: |
+          python build_unified_v3.py \
+            --input-dir output/h1_discovery \
+            --out-dir output/unified_model_v3
+
+      - name: E1 - the rebuilt model must match the H1 seal
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib
+          seal = json.load(open('h1_seal_manifest.json'))['model_sha256']
+          model = pathlib.Path('output/unified_model_v3')
+          bad = []
+          for section, want in sorted(seal.items()):
+              path = model / f'{section}.jsonl.gz'
+              got = hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
+              print(f'{section:32} {"OK" if got == want else "MISMATCH"}')
+              if got != want:
+                  bad.append(section)
+          meta = json.load(open(model / 'dataset_metadata.json'))
+          print('model_version', meta['model_version'])
+          # generated_at_utc differs on every rebuild by construction, and is the only
+          # key that does; the sections above are the comparison that matters.
+          if bad:
+              raise SystemExit(f'E1 FAILED for {bad}')
+          print(f'E1 PASS: {len(seal)} sections match the sealed model')
+          PY
+
+      - name: Upload the model
+        uses: actions/upload-artifact@v4
+        with:
+          name: r40-unified-model-v3
+          path: output/unified_model_v3/
+          retention-days: 90
+
+  census:
+    needs: [plan, build-model]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        shard: ${{ fromJson(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.20.0'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install semver for the runner-side range checks
+        run: npm install --no-save --ignore-scripts semver@7.8.5
+
+      - name: Install osv-scanner at the pinned version, checksum verified
+        run: |
+          URL=$(python -c "import json;print(json.load(open('pinned_tools.json'))['osv_scanner']['url'])")
+          WANT=$(python -c "import json;print(json.load(open('pinned_tools.json'))['osv_scanner']['sha256'])")
+          curl -sSfL -o /tmp/osv-scanner "$URL"
+          GOT=$(sha256sum /tmp/osv-scanner | cut -d' ' -f1)
+          test "$GOT" = "$WANT"
+          sudo install -m 0755 /tmp/osv-scanner /usr/local/bin/osv-scanner
+          osv-scanner --version
+
+      - name: Take delivery of the model
+        uses: actions/download-artifact@v4
+        with:
+          name: r40-unified-model-v3
+          path: output/unified_model_v3
+
+      - name: Record tool versions and run metadata
+        run: |
+          mkdir -p out
+          python - <<'PY' > out/tool_versions.json
+          import json, os, subprocess, datetime
+
+          def v(cmd):
+              try:
+                  return subprocess.run(cmd, capture_output=True, text=True).stdout.strip()
+              except OSError as exc:
+                  return f'unavailable: {exc}'
+
+          json.dump({
+              'node': v(['node', '--version']),
+              'npm': v(['npm', '--version']),
+              'osv_scanner': v(['osv-scanner', '--version']),
+              'npm_registry': v(['npm', 'config', 'get', 'registry']),
+              'semver_package': v(['npm', 'ls', 'semver', '--json', '--depth=0']),
+              'runner_image': os.environ.get('ImageOS', 'unknown'),
+              'runner_image_version': os.environ.get('ImageVersion', 'unknown'),
+              'runner_arch': os.environ.get('RUNNER_ARCH', 'unknown'),
+              'pinned': json.load(open('pinned_tools.json')),
+              'github_run_id': os.environ.get('GH_RUN_ID', 'unknown'),
+              'github_run_attempt': os.environ.get('GH_RUN_ATTEMPT', 'unknown'),
+              'github_sha': os.environ.get('GH_SHA', 'unknown'),
+              'github_repository': os.environ.get('GH_REPO', 'unknown'),
+              'shard': os.environ.get('SHARD_INDEX', 'unknown'),
+              'experiment': 'r40-deployment',
+              'job_started_utc': datetime.datetime.now(
+                  datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'osv_database_version_reported_by_tool': None,
+              'not_comparable_with_census': (
+                  'The scanner binary is pinned; its vulnerability database is not, and '
+                  'npm resolves against the live registry. The sealed census ran on '
+                  '2026-08-18. These outcomes are archived, not compared.'),
+              'artifact_retention_days': 90,
+              'retention_note': (
+                  'Artifacts expire after 90 days. Anything the thesis relies on must '
+                  'be copied out and archived before it lapses.'),
+          }, open('/dev/stdout', 'w'), indent=1, sort_keys=True)
+          PY
+          cat out/tool_versions.json
+        env:
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_SHA: ${{ github.sha }}
+          GH_REPO: ${{ github.repository }}
+          SHARD_INDEX: ${{ matrix.shard }}
+
+      # E1 + E2, in the shard, against the model this shard loaded. Runs BEFORE anything
+      # is installed: a shard that cannot establish fidelity has nothing to say about
+      # what its installs meant, and this step exits non-zero rather than hand back a
+      # provenance file that reads like evidence.
+      - name: Load the model, query it, and prove the answers
+        run: |
+          python r40_online_query.py \
+            --spec schemas/H2_REAL_ENVIRONMENTS.json \
+            --shard ${{ matrix.shard }} \
+            --shard-count ${{ github.event.inputs.shard_count }} \
+            --limit ${{ github.event.inputs.limit }} \
+            --model-dir output/unified_model_v3 \
+            --out out/online-query-${{ matrix.shard }}.json
+
+      - name: Run shard
+        # The manifest passed here is the one the step above just proved is byte-identical
+        # to what this runner's model produces. It is the expected output, not the input.
+        run: |
+          python scripts/run_environment.py \
+            --spec schemas/H2_REAL_ENVIRONMENTS.json \
+            --unified schemas/H2_UNIFIED_RECOMMENDATIONS.json \
+            --shard ${{ matrix.shard }} \
+            --shard-count ${{ github.event.inputs.shard_count }} \
+            --limit ${{ github.event.inputs.limit }} \
+            --out out/shard-${{ matrix.shard }}.jsonl \
+            --raw-out out/raw-${{ matrix.shard }}.jsonl.gz
+
+      - name: Upload shard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r40-shard-${{ matrix.shard }}
+          path: out/
+          retention-days: 90

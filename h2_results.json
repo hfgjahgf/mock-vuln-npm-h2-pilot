@@ -1,0 +1,377 @@
+{
+ "decision": {
+  "alpha": "1/20",
+  "h2_supported": false,
+  "per_comparison": {
+   "ghsa": {
+    "adjusted_monte_carlo_p_fraction": "24/6667",
+    "adjusted_p": 0.00359982000899955,
+    "adjusted_p_below_alpha": true,
+    "ci_direction_positive": true,
+    "difference_positive": true,
+    "holds": true
+   },
+   "nvd": {
+    "adjusted_monte_carlo_p_fraction": "1/6667",
+    "adjusted_p": 0.00014999250037498125,
+    "adjusted_p_below_alpha": true,
+    "ci_direction_positive": true,
+    "difference_positive": true,
+    "holds": true
+   },
+   "osv": {
+    "adjusted_monte_carlo_p_fraction": "2483/20001",
+    "adjusted_p": 0.12414379281035948,
+    "adjusted_p_below_alpha": false,
+    "ci_direction_positive": true,
+    "difference_positive": true,
+    "holds": false
+   }
+  }
+ },
+ "exhaustive_stability": {
+  "comparisons": [
+   "ghsa",
+   "nvd",
+   "osv"
+  ],
+  "family_complete": true,
+  "note": "The same decision rule replayed on the exact permutation p, over the same three comparisons. It verifies the verdict does not depend on sampling the space; the Monte Carlo reading remains the declared primary.",
+  "per_comparison": {
+   "ghsa": {
+    "adjusted_p_fraction": "1/256",
+    "adjusted_p_log10": -2.4082399653118496,
+    "exhaustive_p_fraction": "2/2^10",
+    "holds": true,
+    "method": "closed_form_all_one_direction"
+   },
+   "nvd": {
+    "adjusted_p_fraction": "3/559936185544451052639360570142111069530411374308662383724997275240947967795040236345219373317901778944",
+    "adjusted_p_log10": -101.27101727970599,
+    "exhaustive_p_fraction": "2/2^339",
+    "holds": true,
+    "method": "closed_form_all_one_direction"
+   },
+   "osv": {
+    "adjusted_p_fraction": "1/8",
+    "adjusted_p_log10": -0.9030899869919435,
+    "exhaustive_p_fraction": "2/2^4",
+    "holds": false,
+    "method": "closed_form_all_one_direction"
+   }
+  }
+ },
+ "no_cve_stratum": {
+  "ghsa": {
+   "comparable_pairs": 566,
+   "outcomes": {
+    "package_but_no_fix": 91,
+    "success": 473,
+    "untraceable_or_invalid": 2
+   }
+  },
+  "nvd": {
+   "comparable_pairs": 0,
+   "outcomes": {}
+  },
+  "osv": {
+   "comparable_pairs": 25,
+   "outcomes": {
+    "package_but_no_fix": 6,
+    "success": 19
+   }
+  },
+  "unified": {
+   "comparable_pairs": 591,
+   "outcomes": {
+    "package_but_no_fix": 97,
+    "success": 492,
+    "untraceable_or_invalid": 2
+   }
+  }
+ },
+ "note": "One run. Primary family: Unified against each single source on that source own evaluable denominator, entity-clustered throughout. The no-CVE stratum is reported beside it and never inside it.",
+ "primary_family": {
+  "ghsa": {
+   "a_successes": 2060,
+   "adjusted_monte_carlo_p_fraction": "24/6667",
+   "adjusted_p_value": 0.00359982000899955,
+   "adjusted_p_value_log10": -2.443719213413958,
+   "adjusted_p_value_scientific": "3.599820e-03",
+   "arm_a": "unified",
+   "arm_b": "ghsa",
+   "b_successes": 2050,
+   "cells": {
+    "a_only": 10,
+    "b_only": 0,
+    "both": 2050,
+    "neither": 271
+   },
+   "ci_lower": 0.0017301038062284002,
+   "ci_upper": 0.0072432893054964476,
+   "clusters": 2116,
+   "difference": 0.004290004290004368,
+   "discordant_clusters": 10,
+   "exhaustive_verification": {
+    "computable": true,
+    "discordant_clusters": 10,
+    "exhaustive_extreme_count": 2,
+    "exhaustive_p": 0.001953125,
+    "exhaustive_p_fraction": "2/2^10",
+    "exhaustive_p_log10": -2.709269960975831,
+    "method": "closed_form_all_one_direction"
+   },
+   "monte_carlo_corrected_denominator": 20001,
+   "monte_carlo_corrected_numerator": 36,
+   "monte_carlo_p_fraction": "36/20001",
+   "monte_carlo_sampled_extreme_count": 35,
+   "p_value": 0.001799910004499775,
+   "p_value_log10": -2.744749209077939,
+   "p_value_scientific": "1.799910e-03",
+   "pairs": 2331,
+   "permutations": 20000,
+   "seed": 20260817
+  },
+  "nvd": {
+   "a_successes": 367,
+   "adjusted_monte_carlo_p_fraction": "1/6667",
+   "adjusted_p_value": 0.00014999250037498125,
+   "adjusted_p_value_log10": -3.8239304551255637,
+   "adjusted_p_value_scientific": "1.499925e-04",
+   "arm_a": "unified",
+   "arm_b": "nvd",
+   "b_successes": 0,
+   "cells": {
+    "a_only": 367,
+    "b_only": 0,
+    "both": 0,
+    "neither": 66
+   },
+   "ci_lower": 0.8120649651972158,
+   "ci_upper": 0.8807339449541285,
+   "clusters": 404,
+   "difference": 0.8475750577367206,
+   "discordant_clusters": 339,
+   "exhaustive_verification": {
+    "computable": true,
+    "discordant_clusters": 339,
+    "exhaustive_extreme_count": 2,
+    "exhaustive_p": 1.7859177988785547e-102,
+    "exhaustive_p_fraction": "2/2^339",
+    "exhaustive_p_log10": -101.74813853442565,
+    "method": "closed_form_all_one_direction"
+   },
+   "monte_carlo_corrected_denominator": 20001,
+   "monte_carlo_corrected_numerator": 1,
+   "monte_carlo_p_fraction": "1/20001",
+   "monte_carlo_sampled_extreme_count": 0,
+   "p_value": 4.999750012499375e-05,
+   "p_value_log10": -4.301051709845226,
+   "p_value_scientific": "4.999750e-05",
+   "pairs": 433,
+   "permutations": 20000,
+   "seed": 20260817
+  },
+  "osv": {
+   "a_successes": 111,
+   "adjusted_monte_carlo_p_fraction": "2483/20001",
+   "adjusted_p_value": 0.12414379281035948,
+   "adjusted_p_value_log10": -0.9060749902906621,
+   "adjusted_p_value_scientific": "1.241438e-01",
+   "arm_a": "unified",
+   "arm_b": "osv",
+   "b_successes": 107,
+   "cells": {
+    "a_only": 4,
+    "b_only": 0,
+    "both": 107,
+    "neither": 16
+   },
+   "ci_lower": 0.007575757575757569,
+   "ci_upper": 0.06504065040650409,
+   "clusters": 117,
+   "difference": 0.03149606299212604,
+   "discordant_clusters": 4,
+   "exhaustive_verification": {
+    "computable": true,
+    "discordant_clusters": 4,
+    "exhaustive_extreme_count": 2,
+    "exhaustive_p": 0.125,
+    "exhaustive_p_fraction": "2/2^4",
+    "exhaustive_p_log10": -0.9030899869919435,
+    "method": "closed_form_all_one_direction"
+   },
+   "monte_carlo_corrected_denominator": 20001,
+   "monte_carlo_corrected_numerator": 2483,
+   "monte_carlo_p_fraction": "2483/20001",
+   "monte_carlo_sampled_extreme_count": 2482,
+   "p_value": 0.12414379281035948,
+   "p_value_log10": -0.9060749902906621,
+   "p_value_scientific": "1.241438e-01",
+   "pairs": 127,
+   "permutations": 20000,
+   "seed": 20260817
+  }
+ },
+ "primary_outcomes": {
+  "ghsa": {
+   "not_covered": 30,
+   "package_but_no_fix": 182,
+   "range_disagreement": 5,
+   "success": 2050,
+   "untraceable_or_invalid": 64
+  },
+  "nvd": {
+   "covered_but_no_package": 262,
+   "not_covered": 58,
+   "package_but_no_fix": 112,
+   "range_disagreement": 1
+  },
+  "osv": {
+   "covered_but_no_package": 2,
+   "not_covered": 6,
+   "package_but_no_fix": 7,
+   "success": 107,
+   "untraceable_or_invalid": 5
+  },
+  "unified": {
+   "package_but_no_fix": 212,
+   "success": 2060,
+   "untraceable_or_invalid": 64
+  }
+ },
+ "protocol_version": "h2-protocol-8",
+ "schema": "h2-results/2",
+ "scores_sha256": "76a4630e5a3d3f802ef7848dd81a8c352cca286330cfa19b43ccc54692cc2f27",
+ "secondary_family": {
+  "ghsa|osv": {
+   "a_successes": 101,
+   "adjusted_monte_carlo_p_fraction": "3584/20001",
+   "adjusted_p_value": 0.1791910404479776,
+   "adjusted_p_value_log10": -0.7466837088551388,
+   "adjusted_p_value_scientific": "1.791910e-01",
+   "arm_a": "ghsa",
+   "arm_b": "osv",
+   "b_successes": 107,
+   "cells": {
+    "a_only": 4,
+    "b_only": 10,
+    "both": 97,
+    "neither": 16
+   },
+   "ci_lower": -0.10606060606060608,
+   "ci_upper": 0.007936507936507908,
+   "clusters": 117,
+   "difference": -0.04724409448818889,
+   "discordant_clusters": 14,
+   "exhaustive_verification": {
+    "computable": true,
+    "discordant_clusters": 14,
+    "exhaustive_extreme_count": 2942,
+    "exhaustive_p": 0.1795654296875,
+    "exhaustive_p_fraction": "2942/2^14",
+    "exhaustive_p_log10": -0.7457772709042252,
+    "method": "enumerated"
+   },
+   "monte_carlo_corrected_denominator": 20001,
+   "monte_carlo_corrected_numerator": 3584,
+   "monte_carlo_p_fraction": "3584/20001",
+   "monte_carlo_sampled_extreme_count": 3583,
+   "p_value": 0.1791910404479776,
+   "p_value_log10": -0.7466837088551388,
+   "p_value_scientific": "1.791910e-01",
+   "pairs": 127,
+   "permutations": 20000,
+   "seed": 20260817
+  },
+  "nvd|ghsa": {
+   "a_successes": 0,
+   "adjusted_monte_carlo_p_fraction": "1/6667",
+   "adjusted_p_value": 0.00014999250037498125,
+   "adjusted_p_value_log10": -3.8239304551255637,
+   "adjusted_p_value_scientific": "1.499925e-04",
+   "arm_a": "nvd",
+   "arm_b": "ghsa",
+   "b_successes": 363,
+   "cells": {
+    "a_only": 0,
+    "b_only": 363,
+    "both": 0,
+    "neither": 65
+   },
+   "ci_lower": -0.8812785388127854,
+   "ci_upper": -0.8127962085308057,
+   "clusters": 399,
+   "difference": -0.8481308411214953,
+   "discordant_clusters": 335,
+   "exhaustive_verification": {
+    "computable": true,
+    "discordant_clusters": 335,
+    "exhaustive_extreme_count": 2,
+    "exhaustive_p": 2.8574684782056875e-101,
+    "exhaustive_p_fraction": "2/2^335",
+    "exhaustive_p_log10": -100.54401855176972,
+    "method": "closed_form_all_one_direction"
+   },
+   "monte_carlo_corrected_denominator": 20001,
+   "monte_carlo_corrected_numerator": 1,
+   "monte_carlo_p_fraction": "1/20001",
+   "monte_carlo_sampled_extreme_count": 0,
+   "p_value": 4.999750012499375e-05,
+   "p_value_log10": -4.301051709845226,
+   "p_value_scientific": "4.999750e-05",
+   "pairs": 428,
+   "permutations": 20000,
+   "seed": 20260817
+  },
+  "nvd|osv": {
+   "a_successes": 0,
+   "adjusted_monte_carlo_p_fraction": "1/6667",
+   "adjusted_p_value": 0.00014999250037498125,
+   "adjusted_p_value_log10": -3.8239304551255637,
+   "adjusted_p_value_scientific": "1.499925e-04",
+   "arm_a": "nvd",
+   "arm_b": "osv",
+   "b_successes": 19,
+   "cells": {
+    "a_only": 0,
+    "b_only": 19,
+    "both": 0,
+    "neither": 6
+   },
+   "ci_lower": -0.92,
+   "ci_upper": -0.6,
+   "clusters": 25,
+   "difference": -0.76,
+   "discordant_clusters": 19,
+   "exhaustive_verification": {
+    "computable": true,
+    "discordant_clusters": 19,
+    "exhaustive_extreme_count": 2,
+    "exhaustive_p": 3.814697265625e-06,
+    "exhaustive_p_fraction": "2/2^19",
+    "exhaustive_p_log10": -5.418539921951662,
+    "method": "closed_form_all_one_direction"
+   },
+   "monte_carlo_corrected_denominator": 20001,
+   "monte_carlo_corrected_numerator": 1,
+   "monte_carlo_p_fraction": "1/20001",
+   "monte_carlo_sampled_extreme_count": 0,
+   "p_value": 4.999750012499375e-05,
+   "p_value_log10": -4.301051709845226,
+   "p_value_scientific": "4.999750e-05",
+   "pairs": 25,
+   "permutations": 20000,
+   "seed": 20260817
+  }
+ },
+ "settings": {
+  "alpha": "1/20",
+  "bootstrap_resamples": 20000,
+  "correction": "Holm-Bonferroni on exact rationals",
+  "interval": "entity-clustered bootstrap percentile",
+  "permutations": 20000,
+  "seed": 20260817,
+  "test": "entity-clustered permutation"
+ }
+}

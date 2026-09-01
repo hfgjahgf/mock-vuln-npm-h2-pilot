@@ -1,0 +1,101 @@
+{
+ "deposit": {
+  "doi": "10.5281/zenodo.22234503",
+  "note": "Fill these in after depositing, then commit. Distinct from the ~1 GB Step-2 snapshot whose deposit run_manifest.json defers to project freeze: that one is deferred because it will still change, while these seven are July collection outputs behind a sealed H1 and a sealed model, and will not. Until a URL exists here, the R40 workflow cannot run at all.",
+  "record_url": "https://doi.org/10.5281/zenodo.22234503",
+  "status": "DEPOSITED",
+  "url": "https://zenodo.org/records/22234503/files",
+  "url_template": "https://zenodo.org/api/records/22234503/files/{name}/content",
+  "verification": {
+   "checked_at_utc": "2026-09-01T16:20:53Z",
+   "files_hashed": 7,
+   "mode": "full",
+   "ok": true,
+   "violations": [],
+   "what_this_proves": "Every deposited byte hashes to the value pinned before the upload existed."
+  },
+  "version": "1"
+ },
+ "excluded": {
+  "bytes": 669521988,
+  "consequence": "npm_range_h2.py --self-test resolves every emitted pointer against the raw window record it points into, and cannot run on the runner without these. R40 therefore does NOT re-establish pointer resolvability online; it inherits that from the offline suite, and says so.",
+  "files": {
+   "ghsa_window_raw.jsonl.gz": "read only by npm_range_h2.py --self-test",
+   "nvd_window_raw.jsonl.gz": "read only by npm_range_h2.py --self-test",
+   "osv_window_raw.jsonl.gz": "read only by npm_range_h2.py --self-test"
+  }
+ },
+ "file_count": 7,
+ "files": {
+  "ghsa_full_index.jsonl.gz": {
+   "agrees_with": {
+    "dataset_metadata": true,
+    "run_manifest": true
+   },
+   "bytes": 7190208,
+   "hash_already_committed_in": "run_manifest.json + dataset_metadata.json",
+   "purpose": "GHSA back-query index",
+   "sha256": "eebd522e0770e6b0b6abf4caf3c54a7bdb407ebf473835cb347d93e86ae81fb6"
+  },
+  "h1_coverage_stats.json": {
+   "agrees_with": {},
+   "bytes": 5251,
+   "hash_already_committed_in": "NOTHING - unpinned before R40, which is why it is pinned here",
+   "purpose": "carries snapshot_T, the single day availability is judged against; read by build_h2_query_ledger.snapshot_T()",
+   "sha256": "9dd76f76fc03253e71114015a7414a195d9f647a5a1e54d566b6d47bf717a9ba"
+  },
+  "nvd_full_index.jsonl.gz": {
+   "agrees_with": {
+    "dataset_metadata": true,
+    "run_manifest": true
+   },
+   "bytes": 70498806,
+   "hash_already_committed_in": "run_manifest.json + dataset_metadata.json",
+   "purpose": "NVD back-query index; per the identity contract it never enters an analysis denominator, but the model does not rebuild byte-identically without it",
+   "sha256": "84dbf0965d04e838bba6ae9f7ef7650d4ec9246b738c19355add7a32dfea452b"
+  },
+  "osv_full_index.jsonl.gz": {
+   "agrees_with": {
+    "dataset_metadata": true,
+    "run_manifest": true
+   },
+   "bytes": 191424200,
+   "hash_already_committed_in": "run_manifest.json + dataset_metadata.json",
+   "purpose": "OSV back-query index; also read by score_h2 to decide npm ecosystem membership",
+   "sha256": "065391fe0f0713e7294eb8d18ccb41f9ccb7a86f42cf55782df1ebb04395987f"
+  },
+  "sample_ghsa.jsonl.gz": {
+   "agrees_with": {
+    "dataset_metadata": true,
+    "run_manifest": true
+   },
+   "bytes": 18784539,
+   "hash_already_committed_in": "run_manifest.json + dataset_metadata.json",
+   "purpose": "GHSA half of the frozen cohort",
+   "sha256": "2ae3b809b8fca0b413a8900827c5d598b8ffbed70bf34c40b6e5434675e1d92f"
+  },
+  "sample_nvd.jsonl.gz": {
+   "agrees_with": {
+    "dataset_metadata": true,
+    "run_manifest": true
+   },
+   "bytes": 14945038,
+   "hash_already_committed_in": "run_manifest.json + dataset_metadata.json",
+   "purpose": "NVD half of the 29,477-record frozen cohort; identity and assertion input to build_unified_v3",
+   "sha256": "da0ee9320bad691e938dca08e50ab45367bfbc94831624c755a2970f5c4c0f13"
+  },
+  "sample_osv.jsonl.gz": {
+   "agrees_with": {
+    "dataset_metadata": true,
+    "run_manifest": true
+   },
+   "bytes": 20186668,
+   "hash_already_committed_in": "run_manifest.json + dataset_metadata.json",
+   "purpose": "OSV half of the frozen cohort",
+   "sha256": "c118573b04ab63e8e17d9fb3eeac92f85f7482fa192e5076724ed005d3fb49ef"
+  }
+ },
+ "schema": "r40-input-deposit/1",
+ "total_bytes": 323034710,
+ "what_this_is": "Exactly the files a GitHub runner must fetch before it can rebuild unified_model_v3 and run the decision chain. The workflow verifies each download against the sha256 here, and refuses to build on a mismatch."
+}
