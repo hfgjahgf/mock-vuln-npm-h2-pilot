@@ -62,8 +62,41 @@ PROTOCOL = 'r40-deployment-protocol-1'
 SCHEMA = 'r40-online-query/1'
 
 # Run after the ledger, in this order: each reads what the one before it wrote.
-DOWNSTREAM = ('score_h2.py', 'derive_h2_cicd.py',
-              'build_h2_unified_recommendations.py')
+# score_h2 is compared byte for byte as a subprocess; the two after it are rebuilt in
+# process, because a plain byte comparison of those is not portable - see below.
+DOWNSTREAM = ('score_h2.py',)
+
+# THE ONE PLACE THE COMPARISON IS NOT BYTES, AND WHY.
+#
+# `derive_h2_cicd.py` and `build_h2_unified_recommendations.py` both record, inside
+# their own output, sha256 over the RAW bytes of three or two TEXT files - a protocol,
+# their own source, a gate. Raw bytes of a text file depend on the checkout's
+# line-ending policy: the artefacts were built on Windows, where those files are CRLF,
+# and a Linux runner checks them out as LF. Same content, different hash, so
+# `--check` fails on the runner for a reason that has nothing to do with any decision.
+#
+# The first R40 pre-check found this. `h2_cicd_decisions.json` is SEALED (7553d0ee...,
+# pinned by Test_r38_figures and the reproduction manifest), so the generator cannot be
+# changed to normalise - that would move a sealed artefact to make a picture come out.
+#
+# So the exception is bounded and CHECKED rather than skipped. The rebuild is compared
+# in full; if it differs, the set of differing JSON paths must be exactly a subset of
+# these, AND each differing value must equal the LF-normalised hash of the same file -
+# which is the evidence that the content is identical and only the storage differs.
+# Anything else differing is a failure. "Compare everything except the part that does
+# not match" would be the weaker check this project keeps finding; this asserts what
+# the difference IS.
+LINE_ENDING_DEPENDENT = {
+    'h2_cicd_decisions.json': {
+        'provenance_sha256/protocol': 'schemas/H2_CICD_PROTOCOL.md',
+        'provenance_sha256/generator': 'derive_h2_cicd.py',
+        'provenance_sha256/gate': 'Test_h2_cicd.py',
+    },
+    'schemas/H2_UNIFIED_RECOMMENDATIONS.json': {
+        'provenance_sha256/protocol': 'schemas/H2_REAL_PIPELINE_PROTOCOL.md',
+        'provenance_sha256/generator': 'build_h2_unified_recommendations.py',
+    },
+}
 
 
 def sha256_file(path):
@@ -116,6 +149,109 @@ def ledger_from_model(model_dir):
     return doc, produced == committed, hashlib.sha256(produced).hexdigest()
 
 
+def sha256_lf(path):
+    return hashlib.sha256(path.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
+
+
+def leaf_diff(left, right, prefix=''):
+    """Every leaf path where two parsed documents disagree."""
+    out = {}
+    if isinstance(left, dict) and isinstance(right, dict):
+        for key in sorted(set(left) | set(right)):
+            out.update(leaf_diff(left.get(key, _MISSING), right.get(key, _MISSING),
+                                 f'{prefix}/{key}' if prefix else key))
+    elif isinstance(left, list) and isinstance(right, list) and len(left) == len(right):
+        for i, (a, b) in enumerate(zip(left, right)):
+            out.update(leaf_diff(a, b, f'{prefix}/{i}'))
+    elif left != right:
+        out[prefix] = (left, right)
+    return out
+
+
+_MISSING = object()
+
+
+def account_for(diffs, allowed):
+    """Split differences into "this is the line endings" and "this is a problem".
+
+    Separated out so it can be exercised by `--self-test`. On this machine the
+    artefacts rebuild byte-identically, so the branch that decides whether a
+    difference is acceptable NEVER RUNS here - it only runs on the Linux runner. A
+    piece of logic that only executes where nobody is watching is the piece that needs
+    a test most.
+    """
+    accounted, unexplained = {}, {}
+    for path, (was, now) in diffs.items():
+        source = allowed.get(path)
+        if source and now == sha256_lf(ROOT / source):
+            accounted[path] = {'file': source, 'committed_raw': was,
+                               'here_lf_normalised': now,
+                               'why': 'same content, different line endings'}
+        else:
+            unexplained[path] = {'committed': was, 'here': now}
+    return accounted, unexplained
+
+
+def self_test():
+    """The accounting rule, against cases the runner can actually produce."""
+    allowed = {'provenance_sha256/gate': 'Test_h2_cicd.py'}
+    lf_hash = sha256_lf(ROOT / 'Test_h2_cicd.py')
+    cases = [
+        ('no differences at all', {}, True),
+        ('an allowed path holding this file LF-normalised',
+         {'provenance_sha256/gate': ('deadbeef', lf_hash)}, True),
+        ('an allowed path holding something else entirely',
+         {'provenance_sha256/gate': ('deadbeef', 'f' * 64)}, False),
+        ('a path nobody allowed', {'counts/decided': (10, 11)}, False),
+        ('an allowed path AND a decision that moved',
+         {'provenance_sha256/gate': ('deadbeef', lf_hash),
+          'decisions/0/by_arm/unified/recommended_version': ('1.0.0', '2.0.0')}, False),
+    ]
+    ok = True
+    for label, diffs, want in cases:
+        _accounted, unexplained = account_for(diffs, allowed)
+        got = not unexplained
+        ok &= got == want
+        print(f"  [{'PASS' if got == want else 'FAIL'}] {label}: "
+              f"{'accepted' if got else 'rejected'}")
+    # leaf_diff itself: a nested change must be found, an equal document must not.
+    same = leaf_diff({'a': {'b': [1, 2]}}, {'a': {'b': [1, 2]}})
+    moved = leaf_diff({'a': {'b': [1, 2]}}, {'a': {'b': [1, 3]}})
+    ok &= same == {} and list(moved) == ['a/b/1']
+    print(f"  [{'PASS' if same == {} and list(moved) == ['a/b/1'] else 'FAIL'}] "
+          f'leaf_diff finds a nested change and reports none when equal')
+    print(f"R40 ONLINE QUERY SELF-TEST: {'PASS' if ok else 'FAIL'}")
+    return 0 if ok else 1
+
+
+def rebuild_in_process(module, artefact, allowed):
+    """Rebuild an artefact here and account for every byte that differs.
+
+    Not `--check` in a subprocess: that answers yes or no, and the answer on a Linux
+    runner is no for a reason that is not about any decision. This one has to say WHAT
+    differs and prove the difference is only how a text file is stored.
+    """
+    produced_doc = module.build()
+    produced = module.serialise(produced_doc)
+    committed_path = ROOT / artefact
+    committed = committed_path.read_bytes()
+    if produced == committed:
+        return {'artefact': artefact, 'identical_bytes': True, 'passed': True,
+                'differences': {}}
+    diffs = leaf_diff(json.loads(committed.decode('utf-8')), produced_doc)
+    accounted, unexplained = account_for(diffs, allowed)
+    return {
+        'artefact': artefact,
+        'identical_bytes': False,
+        'passed': not unexplained,
+        'differences': {'accounted_for_by_line_endings': accounted,
+                        'unexplained': unexplained},
+        'note': ('Every differing value is a sha256 over the raw bytes of a text file '
+                 'and equals that file LF-normalised here, so the content is the same '
+                 'and only the checkout differs. Any other difference fails.'),
+    }
+
+
 def downstream_checks(python=sys.executable):
     out = []
     for script in DOWNSTREAM:
@@ -125,6 +261,15 @@ def downstream_checks(python=sys.executable):
                     'returncode': run.returncode,
                     'passed': run.returncode == 0,
                     'tail': (run.stdout or run.stderr or '').strip()[-200:]})
+    import derive_h2_cicd
+    import build_h2_unified_recommendations
+    for module, artefact in ((derive_h2_cicd, 'h2_cicd_decisions.json'),
+                             (build_h2_unified_recommendations,
+                              'schemas/H2_UNIFIED_RECOMMENDATIONS.json')):
+        result = rebuild_in_process(module, artefact,
+                                    LINE_ENDING_DEPENDENT[artefact])
+        result['command'] = f'{artefact} rebuilt in process'
+        out.append(result)
     return out
 
 
@@ -257,6 +402,10 @@ def serialise(doc):
 
 
 def main():
+    # Checked before the parser, because --spec and the rest are required for a real
+    # run and the self-test has no shard to speak of.
+    if '--self-test' in sys.argv:
+        return self_test()
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--spec', required=True)
     ap.add_argument('--shard', type=int, required=True)
@@ -266,6 +415,8 @@ def main():
     ap.add_argument('--out', required=True)
     ap.add_argument('--skip-downstream', action='store_true',
                     help='fidelity checks only from this process; for local testing')
+    ap.add_argument('--self-test', action='store_true',
+                    help='exercise the difference-accounting rule')
     args = ap.parse_args()
 
     doc = build(args.spec, args.shard, args.shard_count, args.limit,

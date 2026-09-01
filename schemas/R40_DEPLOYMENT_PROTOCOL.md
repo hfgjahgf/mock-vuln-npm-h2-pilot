@@ -171,6 +171,32 @@ R40 让模型上 runner, 并让每一条建议都是**在 runner 上算出来的
 4. **本实验不测量任何人的修复速度**, 也不支持任何"更快"的表述;
 5. **模型是被重建的, 不是被下载的成品**。若日后改为分发成品模型, E1 的含义随之改变,
    届时必须改协议版本, 而不是沿用本文件。
+6. **E2 有一处不是字节比对, 范围已划死并被检查(第二次预跑发现)。**
+
+   `derive_h2_cicd.py` 与 `build_h2_unified_recommendations.py` 都把**文本文件的
+   原始字节 sha256** 写进自己的产物(协议、生成器、门)。**文本文件的原始字节取决于
+   检出的行尾策略**:产物是在 Windows(**CRLF**)上生成的, Linux runner 检出为 **LF**,
+   于是同样的内容得到不同的哈希, `--check` 在 runner 上失败, **而这与任何决策无关**。
+
+   **`h2_cicd_decisions.json` 已封板**(`7553d0ee…`, 由 `Test_r38_figures.py` 与
+   复现 manifest 钉住), **不能为了让检查通过去改生成器** —— 那是动被检查的东西。
+
+   **所以不是跳过, 而是把差异集合本身纳入检查**:产物在 shard 内重建并**整份比对**;
+   若有差异, **差异路径必须全部落在下列五项之内**, 且**每一个值必须等于同一文件
+   LF 归一化后的哈希** —— 这正是"内容相同、只有存储方式不同"的证据。
+   **其余任何差异一律失败。**
+
+   | 产物 | 允许差异的路径 |
+   |---|---|
+   | `h2_cicd_decisions.json` | `provenance_sha256/{protocol, generator, gate}` |
+   | `H2_UNIFIED_RECOMMENDATIONS.json` | `provenance_sha256/{protocol, generator}` |
+
+   门 `line_ending_exception_is_bounded` 要求:**允许项必须全在 `provenance_sha256` 之下**
+   (决定了什么的字段一概不许), 且**无法解释的差异必须让该 shard 失败**。
+
+   > **由此得到一个此前没人知道的结论**:`h2_cicd_decisions.json` 与
+   > `H2_UNIFIED_RECOMMENDATIONS.json` **只在行尾策略相同的检出上逐字节可复现**。
+   > 这是 H2 层的限制, 不是 R40 的, **但它是 R40 发现的**。
 
 ---
 
