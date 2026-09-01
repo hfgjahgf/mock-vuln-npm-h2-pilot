@@ -163,6 +163,20 @@ jobs:
           path: output/unified_model_v3/
           retention-days: 90
 
+      # The shards need these too, and the first pre-check found that out the hard way:
+      # npm_range_h2 reads sample_nvd for the NVD segment facts and score_h2 reads the
+      # three full indexes, so a shard holding only the model dies before it can query
+      # anything. Passed on as an artifact rather than re-fetched 32 times: it is the
+      # same 323 MB, every shard then works from bytes this job already verified, and
+      # Zenodo is asked once instead of thirty-two times. The shards re-check the
+      # hashes anyway - see below.
+      - name: Upload the frozen inputs for the shards
+        uses: actions/upload-artifact@v4
+        with:
+          name: r40-frozen-inputs
+          path: output/h1_discovery/
+          retention-days: 90
+
   census:
     needs: [plan, build-model]
     runs-on: ubuntu-latest
@@ -201,6 +215,34 @@ jobs:
         with:
           name: r40-unified-model-v3
           path: output/unified_model_v3
+
+      - name: Take delivery of the frozen inputs
+        uses: actions/download-artifact@v4
+        with:
+          name: r40-frozen-inputs
+          path: output/h1_discovery
+
+      - name: Re-verify the frozen inputs in this shard
+        # Checked again here, not trusted because an earlier job checked them. An
+        # artifact round-trip is a place bytes can change, and the whole point of the
+        # experiment is that nothing is taken on the strength of having been checked
+        # somewhere else.
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib
+          doc = json.load(open('schemas/R40_INPUT_DEPOSIT.json'))
+          here = pathlib.Path('output/h1_discovery')
+          bad = []
+          for name, meta in sorted(doc['files'].items()):
+              path = here / name
+              got = hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
+              print(f'{name:30} {"OK" if got == meta["sha256"] else "MISMATCH"}')
+              if got != meta['sha256']:
+                  bad.append(name)
+          if bad:
+              raise SystemExit(f'frozen inputs did not survive the artifact: {bad}')
+          print(f'{len(doc["files"])} inputs re-verified in this shard')
+          PY
 
       - name: Record tool versions and run metadata
         run: |
