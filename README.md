@@ -126,6 +126,64 @@ python tests/Test_pipeline_parsers.py --self-test  # 14 mutations
 These run offline against fixtures. **If the real scanner output differs from the
 fixtures, the fixtures and the parser change 鈥?never the criteria** (protocol 搂5.3b).
 
+## R40 — the deployment run (`deployment.yml`)
+
+**A second experiment in this repository, not a replacement for the census.**
+`census.yml` ran R37 once and is evidence; it must not be edited. `deployment.yml` asks
+a different question and has different endpoints.
+
+The census carried a Unified arm computed in advance on a laptop and shipped as a file —
+the model itself never reached a runner. R40 rebuilds it **on the runner** from seven
+frozen inputs fetched by DOI and hash-verified one by one; 32 shards then load that
+model and query it, and every recommendation is computed during the run.
+
+Registered endpoints, and only these:
+
+- **E1** — the rebuilt model matches `h1_seal_manifest.json`, section for section.
+- **E2** — the chain run on the runner reproduces the committed ledger, scores,
+  decisions and recommendations, byte for byte apart from a bounded set of
+  line-ending-dependent digests, each accounted for individually.
+
+**Install, scan and re-scan outcomes are archived and are NOT an endpoint.** The scanner
+binary is pinned; its vulnerability database is not, and npm resolves against a registry
+that has moved since the census ran on 2026-08-18. `h2_supported` stays `false` and is
+not revisited.
+
+### Assembling and running it
+
+Do not copy the kit by hand — it is 32 files with two layouts in it: the pipeline files
+land at this repository's root, everything else keeps its thesis-relative path. The
+mapping lives in `schemas/R40_DEPLOYMENT_FREEZE.json` under
+`kit_layout_thesis_to_public_repo`, and the copy is done by a script that hashes each
+file after copying:
+
+```bash
+# from the thesis repository
+python assemble_r40_kit.py --target <this repository>
+git add -A && git commit -m 'R40 deployment kit' && git push
+```
+
+```bash
+# engineering pre-check: one shard, ten environments, results DISCARDED
+gh workflow run deployment.yml -f shard_count=200 -f shards='[0]' -f limit=10
+
+# the counted run, once
+gh workflow run deployment.yml -f shard_count=32 -f shards=all -f limit=0
+```
+
+Then, back in the thesis repository:
+
+```bash
+python ingest_r40_deployment.py --run <downloaded artifacts> --out r40_deployment_run.json
+```
+
+The ingest derives whether a return is a pre-check or the counted run **from the
+workflow inputs the run recorded**, never from a flag passed to it. Four pre-checks were
+needed before the counted one, and each found something: shards given the model but not
+the inputs the chain opens; two artefacts that only rebuild on a matching line-ending
+checkout; and a return that recorded no workflow inputs at all, so the rule deciding
+whether it counted had nothing to read.
+
 ## What this cannot answer
 
 Every fixture has one target instance at the top level, so **transitive pinning and
